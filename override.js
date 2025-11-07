@@ -135,7 +135,7 @@ function buildBaseLists({ landing, lowCost, countryGroupNames }) {
     return { defaultSelector, defaultFallback, subgroupProxies, defaultProxiesDirect };
 }
 
-// 【修复】只保留原始脚本中有效的 rule-providers
+// 【修复】使用 format: "text" 并添加所有 .list 规则
 const ruleProviders = {
     "ADBlock": {
         "type": "http",
@@ -232,6 +232,55 @@ const ruleProviders = {
         "interval": 86400,
         "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/Crypto.list",
         "path": "./ruleset/Crypto.list"
+    },
+    // 【修复】添加所有 .list 规则
+    "OpenAI": {
+        "type": "http",
+        "behavior": "classical",
+        "format": "text",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.list",
+        "path": "./ruleset/OpenAI.list"
+    },
+    "Gemini": {
+        "type": "http",
+        "behavior": "classical",
+        "format": "text",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Gemini/Gemini.list",
+        "path": "./ruleset/Gemini.list"
+    },
+    "Claude": {
+        "type": "http",
+        "behavior": "classical",
+        "format": "text",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Claude/Claude.list",
+        "path": "./ruleset/Claude.list"
+    },
+    "GitHub": {
+        "type": "http",
+        "behavior": "classical",
+        "format": "text",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.list",
+        "path": "./ruleset/GitHub.list"
+    },
+    "Steam": {
+        "type": "http",
+        "behavior": "classical",
+        "format": "text",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Steam/Steam.list",
+        "path": "./ruleset/Steam.list"
+    },
+    "SteamCN": {
+        "type": "http",
+        "behavior": "classical",
+        "format": "text",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.list",
+        "path": "./ruleset/SteamCN.list"
     }
 }
 
@@ -243,11 +292,8 @@ const baseRules = [
     `RULE-SET,SogouInput,${PROXY_GROUPS.DIRECT}`, // (修改)
 
     // --- 2. 高优先级直连规则 (CN/Private/SteamFix) ---
-    // 【修复】手动添加 SteamCN 缺失的规则
-    `DOMAIN-SUFFIX,steamcontent.com,${PROXY_GROUPS.DIRECT}`,
-    `DOMAIN-SUFFIX,steamserver.net,${PROXY_GROUPS.DIRECT}`,
-    `DOMAIN-SUFFIX,steamusercontent.com,${PROXY_GROUPS.DIRECT}`,
-    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留)
+    `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT}`, // 【修复】使用 .list 规则
+    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留) 原始 SteamFix
     `GEOSITE,PRIVATE,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,CN,${PROXY_GROUPS.DIRECT}`,
     `GEOIP,PRIVATE,${PROXY_GROUPS.DIRECT}`,
@@ -257,12 +303,13 @@ const baseRules = [
     `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
 
     // --- 3. 特定服务规则 (AI, 媒体等) ---
-    // 【修复】使用 GEOSITE 和手动 DOMAIN 替代无效的 YAML
-    `GEOSITE,openai,OpenAI`,
-    `GEOSITE,github,GitHub`,
-    `DOMAIN,cdn.usefathom.com,Claude`,
-    `DOMAIN-SUFFIX,anthropic.com,Claude`,
-    `DOMAIN-SUFFIX,claude.ai,Claude`,
+    // 【修复】使用 .list 规则
+    `RULE-SET,OpenAI,OpenAI`,
+    `RULE-SET,Gemini,Gemini`,
+    `RULE-SET,Claude,Claude`,
+    `RULE-SET,GitHub,GitHub`,
+    `RULE-SET,Steam,Steam`,
+    
     `GEOSITE,TELEGRAM,Telegram`,
     `GEOSITE,YOUTUBE,YouTube`,
     `GEOSITE,NETFLIX,Netflix`,
@@ -271,21 +318,11 @@ const baseRules = [
     `GEOSITE,BILIBILI,Bilibili`,
     "DST-PORT,22,SSH(22端口)",
 
-    // --- 4. Google/Gemini 合并规则 ---
-    `GEOSITE,google,Gemini`, // (GEOSITE,CN 在此之前，所以安全)
+    // --- 4. Google (Fallback) ---
+    // (如果 Gemini.list 不全，GEOSITE,google 会捕获剩余的 google 流量)
+    `GEOSITE,google,Gemini`, 
     
-    // --- 5. Steam (Global) 规则 ---
-    // 【修复】手动添加 Steam 全局规则，并指向新 "Steam" 组
-    `DOMAIN-SUFFIX,steampowered.com,Steam`,
-    `DOMAIN-SUFFIX,steamcommunity.com,Steam`,
-    `DOMAIN-SUFFIX,steam-api.com,Steam`,
-    `DOMAIN-SUFFIX,steam-chat.com,Steam`,
-    `DOMAIN-SUFFIX,steam.tv,Steam`,
-    `DOMAIN-SUFFIX,steamdeck.com,Steam`,
-    `DOMAIN-SUFFIX,steamgames.com,Steam`,
-    `DOMAIN-SUFFIX,valvesoftware.com,Steam`,
-
-    // --- 6. 被删除的分组 (指向手动) ---
+    // --- 5. 被删除的分组 (指向手动) ---
     `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL}`, // (修改)
     `RULE-SET,Crypto,${PROXY_GROUPS.MANUAL}`, // (修改)
     `RULE-SET,EHentai,${PROXY_GROUPS.MANUAL}`, // (修改)
@@ -294,15 +331,15 @@ const baseRules = [
     `GEOSITE,BAHAMUT,${PROXY_GROUPS.MANUAL}`, // (修改)
     `GEOSITE,PIKPAK,${PROXY_GROUPS.MANUAL}`, // (修改)
     
-    // --- 7. 静态资源 ---
+    // --- 6. 静态资源 ---
     `RULE-SET,StaticResources,静态资源`,
     `RULE-SET,CDNResources,静态资源`,
     `RULE-SET,AdditionalCDNResources,静态资源`,
 
-    // --- 8. GFW 规则 ---
+    // --- 7. GFW 规则 ---
     `GEOSITE,GFW,${PROXY_GROUPS.SELECT}`,
 
-    // --- 9. 最终回退规则 ---
+    // --- 8. 最终回退规则 ---
     `MATCH,${PROXY_GROUPS.SELECT}`
 ];
 
