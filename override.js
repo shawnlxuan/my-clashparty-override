@@ -243,7 +243,7 @@ const baseRules = [
     `RULE-SET,SogouInput,${PROXY_GROUPS.DIRECT}`, // (修改)
 
     // --- 2. 高优先级直连规则 (CN/Private/SteamFix) ---
-    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留) SteamCN 流量
+    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留) 这将修复 SteamCN 问题
     `GEOSITE,PRIVATE,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,CN,${PROXY_GROUPS.DIRECT}`,
     `GEOIP,PRIVATE,${PROXY_GROUPS.DIRECT}`,
@@ -256,6 +256,7 @@ const baseRules = [
     // 【修复】使用 GEOSITE 和手动 DOMAIN 替代无效的 YAML
     `GEOSITE,openai,OpenAI`,
     `GEOSITE,github,GitHub`,
+    `DOMAIN,cdn.usefathom.com,Claude`,
     `DOMAIN-SUFFIX,anthropic.com,Claude`,
     `DOMAIN-SUFFIX,claude.ai,Claude`,
     `GEOSITE,TELEGRAM,Telegram`,
