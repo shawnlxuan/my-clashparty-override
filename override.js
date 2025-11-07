@@ -243,7 +243,11 @@ const baseRules = [
     `RULE-SET,SogouInput,${PROXY_GROUPS.DIRECT}`, // (修改)
 
     // --- 2. 高优先级直连规则 (CN/Private/SteamFix) ---
-    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留) 这将修复 SteamCN 问题
+    // 【修复】手动添加 SteamCN 缺失的规则
+    `DOMAIN-SUFFIX,steamcontent.com,${PROXY_GROUPS.DIRECT}`,
+    `DOMAIN-SUFFIX,steamserver.net,${PROXY_GROUPS.DIRECT}`,
+    `DOMAIN-SUFFIX,steamusercontent.com,${PROXY_GROUPS.DIRECT}`,
+    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留)
     `GEOSITE,PRIVATE,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,CN,${PROXY_GROUPS.DIRECT}`,
     `GEOIP,PRIVATE,${PROXY_GROUPS.DIRECT}`,
@@ -269,8 +273,19 @@ const baseRules = [
 
     // --- 4. Google/Gemini 合并规则 ---
     `GEOSITE,google,Gemini`, // (GEOSITE,CN 在此之前，所以安全)
+    
+    // --- 5. Steam (Global) 规则 ---
+    // 【修复】手动添加 Steam 全局规则，并指向新 "Steam" 组
+    `DOMAIN-SUFFIX,steampowered.com,Steam`,
+    `DOMAIN-SUFFIX,steamcommunity.com,Steam`,
+    `DOMAIN-SUFFIX,steam-api.com,Steam`,
+    `DOMAIN-SUFFIX,steam-chat.com,Steam`,
+    `DOMAIN-SUFFIX,steam.tv,Steam`,
+    `DOMAIN-SUFFIX,steamdeck.com,Steam`,
+    `DOMAIN-SUFFIX,steamgames.com,Steam`,
+    `DOMAIN-SUFFIX,valvesoftware.com,Steam`,
 
-    // --- 5. 被删除的分组 (指向手动) ---
+    // --- 6. 被删除的分组 (指向手动) ---
     `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL}`, // (修改)
     `RULE-SET,Crypto,${PROXY_GROUPS.MANUAL}`, // (修改)
     `RULE-SET,EHentai,${PROXY_GROUPS.MANUAL}`, // (修改)
@@ -279,15 +294,15 @@ const baseRules = [
     `GEOSITE,BAHAMUT,${PROXY_GROUPS.MANUAL}`, // (修改)
     `GEOSITE,PIKPAK,${PROXY_GROUPS.MANUAL}`, // (修改)
     
-    // --- 6. 静态资源 ---
+    // --- 7. 静态资源 ---
     `RULE-SET,StaticResources,静态资源`,
     `RULE-SET,CDNResources,静态资源`,
     `RULE-SET,AdditionalCDNResources,静态资源`,
 
-    // --- 7. GFW 规则 ---
+    // --- 8. GFW 规则 ---
     `GEOSITE,GFW,${PROXY_GROUPS.SELECT}`,
 
-    // --- 8. 最终回退规则 ---
+    // --- 9. 最终回退规则 ---
     `MATCH,${PROXY_GROUPS.SELECT}`
 ];
 
@@ -643,6 +658,13 @@ function buildProxyGroups({
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png",
             "type": "select",
             "proxies": subgroupProxies 
+        },
+        // 【修复】新建 Steam 分组
+        {
+            "name": "Steam",
+            "icon": "https://cdn.simpleicons.org/steam", 
+            "type": "select",
+            "proxies": subgroupProxies
         },
         {
             "name": "SSH(22端口)",
