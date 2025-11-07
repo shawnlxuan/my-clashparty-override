@@ -135,7 +135,7 @@ function buildBaseLists({ landing, lowCost, countryGroupNames }) {
     return { defaultSelector, defaultFallback, subgroupProxies, defaultProxiesDirect };
 }
 
-// 【修复】使用 format: "text" 并添加所有 .list 规则
+// 【修复】只保留原始脚本中有效的 rule-providers
 const ruleProviders = {
     "ADBlock": {
         "type": "http",
@@ -232,55 +232,6 @@ const ruleProviders = {
         "interval": 86400,
         "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/Crypto.list",
         "path": "./ruleset/Crypto.list"
-    },
-    // 【修复】添加所有 .list 规则
-    "OpenAI": {
-        "type": "http",
-        "behavior": "classical",
-        "format": "text",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.list",
-        "path": "./ruleset/OpenAI.list"
-    },
-    "Gemini": {
-        "type": "http",
-        "behavior": "classical",
-        "format": "text",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Gemini/Gemini.list",
-        "path": "./ruleset/Gemini.list"
-    },
-    "Claude": {
-        "type": "http",
-        "behavior": "classical",
-        "format": "text",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Claude/Claude.list",
-        "path": "./ruleset/Claude.list"
-    },
-    "GitHub": {
-        "type": "http",
-        "behavior": "classical",
-        "format": "text",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.list",
-        "path": "./ruleset/GitHub.list"
-    },
-    "Steam": {
-        "type": "http",
-        "behavior": "classical",
-        "format": "text",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Steam/Steam.list",
-        "path": "./ruleset/Steam.list"
-    },
-    "SteamCN": {
-        "type": "http",
-        "behavior": "classical",
-        "format": "text",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.list",
-        "path": "./ruleset/SteamCN.list"
     }
 }
 
@@ -292,8 +243,11 @@ const baseRules = [
     `RULE-SET,SogouInput,${PROXY_GROUPS.DIRECT}`, // (修改)
 
     // --- 2. 高优先级直连规则 (CN/Private/SteamFix) ---
-    `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT}`, // 【修复】使用 .list 规则
-    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留) 原始 SteamFix
+    // 【修复】手动添加 SteamCN 缺失的规则
+    `DOMAIN-SUFFIX,steamcontent.com,${PROXY_GROUPS.DIRECT}`,
+    `DOMAIN-SUFFIX,steamserver.net,${PROXY_GROUPS.DIRECT}`,
+    `DOMAIN-SUFFIX,steamusercontent.com,${PROXY_GROUPS.DIRECT}`,
+    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留)
     `GEOSITE,PRIVATE,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,CN,${PROXY_GROUPS.DIRECT}`,
     `GEOIP,PRIVATE,${PROXY_GROUPS.DIRECT}`,
@@ -303,13 +257,12 @@ const baseRules = [
     `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
 
     // --- 3. 特定服务规则 (AI, 媒体等) ---
-    // 【修复】使用 .list 规则
-    `RULE-SET,OpenAI,OpenAI`,
-    `RULE-SET,Gemini,Gemini`,
-    `RULE-SET,Claude,Claude`,
-    `RULE-SET,GitHub,GitHub`,
-    `RULE-SET,Steam,Steam`,
-    
+    // 【修复】使用 GEOSITE 和手动 DOMAIN 替代无效的 YAML
+    `GEOSITE,openai,OpenAI`,
+    `GEOSITE,github,GitHub`,
+    `DOMAIN,cdn.usefathom.com,Claude`,
+    `DOMAIN-SUFFIX,anthropic.com,Claude`,
+    `DOMAIN-SUFFIX,claude.ai,Claude`,
     `GEOSITE,TELEGRAM,Telegram`,
     `GEOSITE,YOUTUBE,YouTube`,
     `GEOSITE,NETFLIX,Netflix`,
@@ -318,11 +271,21 @@ const baseRules = [
     `GEOSITE,BILIBILI,Bilibili`,
     "DST-PORT,22,SSH(22端口)",
 
-    // --- 4. Google (Fallback) ---
-    // (如果 Gemini.list 不全，GEOSITE,google 会捕获剩余的 google 流量)
-    `GEOSITE,google,Gemini`, 
+    // --- 4. Google/Gemini 合并规则 ---
+    `GEOSITE,google,Gemini`, // (GEOSITE,CN 在此之前，所以安全)
     
-    // --- 5. 被删除的分组 (指向手动) ---
+    // --- 5. Steam (Global) 规则 ---
+    // 【修复】手动添加 Steam 全局规则，并指向新 "Steam" 组
+    `DOMAIN-SUFFIX,steampowered.com,Steam`,
+    `DOMAIN-SUFFIX,steamcommunity.com,Steam`,
+    `DOMAIN-SUFFIX,steam-api.com,Steam`,
+    `DOMAIN-SUFFIX,steam-chat.com,Steam`,
+    `DOMAIN-SUFFIX,steam.tv,Steam`,
+    `DOMAIN-SUFFIX,steamdeck.com,Steam`,
+    `DOMAIN-SUFFIX,steamgames.com,Steam`,
+    `DOMAIN-SUFFIX,valvesoftware.com,Steam`,
+
+    // --- 6. 被删除的分组 (指向手动) ---
     `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL}`, // (修改)
     `RULE-SET,Crypto,${PROXY_GROUPS.MANUAL}`, // (修改)
     `RULE-SET,EHentai,${PROXY_GROUPS.MANUAL}`, // (修改)
@@ -331,15 +294,15 @@ const baseRules = [
     `GEOSITE,BAHAMUT,${PROXY_GROUPS.MANUAL}`, // (修改)
     `GEOSITE,PIKPAK,${PROXY_GROUPS.MANUAL}`, // (修改)
     
-    // --- 6. 静态资源 ---
+    // --- 7. 静态资源 ---
     `RULE-SET,StaticResources,静态资源`,
     `RULE-SET,CDNResources,静态资源`,
     `RULE-SET,AdditionalCDNResources,静态资源`,
 
-    // --- 7. GFW 规则 ---
+    // --- 8. GFW 规则 ---
     `GEOSITE,GFW,${PROXY_GROUPS.SELECT}`,
 
-    // --- 8. 最终回退规则 ---
+    // --- 9. 最终回退规则 ---
     `MATCH,${PROXY_GROUPS.SELECT}`
 ];
 
@@ -583,13 +546,14 @@ function buildCountryProxyGroups({ countries, landing, loadBalance }) {
     return groups;
 }
 
-// 【修复】重构 buildProxyGroups
+// 【修改】 buildProxyGroups 函数，为 "手动选择" 添加排序
 function buildProxyGroups({
     landing,
     countries,
+    countryGroupNames, // 【修改】接收 countryGroupNames
     countryProxyGroups,
     lowCost,
-    subgroupProxies, // 接收新的子分组列表
+    subgroupProxies,
     defaultProxiesDirect,
     defaultSelector,
     defaultFallback
@@ -602,6 +566,18 @@ function buildProxyGroups({
         ? defaultSelector.filter(name => name !== PROXY_GROUPS.LANDING && name !== PROXY_GROUPS.FALLBACK)
         : [];
 
+    // 【新逻辑】为 "手动选择" 分组创建排序后的国家列表
+    const preferredOrder = ["香港节点", "台湾节点", "日本节点", "美国节点", "新加坡节点"];
+    const availableGroups = new Set(countryGroupNames);
+    const preferredSet = new Set(preferredOrder);
+    // 1. 添加用户指定的、且当前订阅中可用的分组
+    const sortedCountryGroups = preferredOrder.filter(group => availableGroups.has(group));
+    // 2. 添加剩余的其他分组 (按原先的顺序)
+    const otherGroups = countryGroupNames.filter(group => !preferredSet.has(group));
+    // 3. 合并成 "手动选择" 组顶部的分组列表
+    const manualProxiesList = sortedCountryGroups.concat(otherGroups);
+
+
     return [
         {
             "name": PROXY_GROUPS.SELECT,
@@ -613,7 +589,8 @@ function buildProxyGroups({
             "name": PROXY_GROUPS.MANUAL,
             "icon": "https://cdn.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png", // 恢复图标
             "include-all": true,
-            "type": "select"
+            "type": "select",
+            "proxies": manualProxiesList // 【修改】添加排序后的国家分组
         },
         (landing) ? {
             "name": "前置代理",
@@ -750,7 +727,7 @@ function main(config) {
     const {
         defaultSelector,
         defaultFallback,
-        subgroupProxies, // 【修复】获取新列表
+        subgroupProxies, 
         defaultProxiesDirect
     } = buildBaseLists({ landing, lowCost, countryGroupNames });
 
@@ -758,12 +735,14 @@ function main(config) {
     const countryProxyGroups = buildCountryProxyGroups({ countries, landing, loadBalance });
 
     // 生成代理组
+    // 【修改】传入 countryGroupNames
     const proxyGroups = buildProxyGroups({
         landing,
         countries,
+        countryGroupNames, // 【修改】传入
         countryProxyGroups,
         lowCost,
-        subgroupProxies, // 【修复】传入新列表
+        subgroupProxies,
         defaultProxiesDirect,
         defaultSelector,
         defaultFallback
