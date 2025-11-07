@@ -628,13 +628,13 @@ function buildProxyGroups({
         },
         {
             "name": "Gemini",
-            "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/chatgpt.png", // 使用相同图标
+            "icon": "https://cdn.simpleicons.org/googlegemini",
             "type": "select",
             "proxies": defaultProxies
         },
         {
             "name": "Claude",
-            "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/chatgpt.png", // 使用相同图标
+            "icon": "https://cdn.simpleicons.org/claude", 
             "type": "select",
             "proxies": defaultProxies
         },
@@ -788,3 +788,4 @@ function main(config) {
 
     return resultConfig;
 }
+
