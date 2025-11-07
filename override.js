@@ -177,16 +177,7 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.yaml",
         "path": "./ruleset/GitHub.yaml"
     },
-    // 【保留】Steam 规则 (规则列表需要)
-    "Steam": {
-        "type": "http",
-        "behavior": "domain",
-        "format": "yaml",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Steam/Steam.yaml",
-        "path": "./ruleset/Steam.yaml"
-    },
-    // 【保留】SteamCN 规则 (规则列表需要)
+    // 【新增】SteamCN 规则
     "SteamCN": {
         "type": "http",
         "behavior": "domain",
@@ -277,6 +268,7 @@ const ruleProviders = {
     }
 }
 
+// 【修复】重排所有规则顺序
 const baseRules = [
     // --- 1. 广告和隐私规则 ---
     `RULE-SET,ADBlock,广告拦截`,
@@ -291,7 +283,7 @@ const baseRules = [
     `GEOSITE,GOOGLE-PLAY@CN,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,MICROSOFT@CN,${PROXY_GROUPS.DIRECT}`,
     `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
-    // 【修改】SteamCN 规则，高优先级直连
+    // 【新增】SteamCN 规则，高优先级直连
     `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT}`,
 
     // --- 3. 特定服务规则 (AI, 媒体等) ---
@@ -305,8 +297,6 @@ const baseRules = [
     "GEOIP,TELEGRAM,Telegram",
     "GEOSITE,BILIBILI,Bilibili",
     "DST-PORT,22,SSH(22端口)",
-    // 【修改】Steam (Global) 规则指向 "选择代理"
-    `RULE-SET,Steam,${PROXY_GROUPS.SELECT}`,
 
     // --- 4. Google/Gemini 合并规则 ---
     `RULE-SET,Gemini,Gemini`,
