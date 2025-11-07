@@ -1,0 +1,1255 @@
+proxies:
+  - name: "\U0001F1ED\U0001F1F0 HK丨香港1"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10101
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1ED\U0001F1F0 HK丨香港2"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10102
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1ED\U0001F1F0 HK丨香港3"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10103
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1ED\U0001F1F0 HK丨香港4"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10104
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1ED\U0001F1F0 HK丨香港5"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 10105
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F9\U0001F1FC TW丨台湾1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 10201
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F9\U0001F1FC TW丨台湾2"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 10202
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F9\U0001F1FC TW丨台湾3"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 10203
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1EF\U0001F1F5 JP丨日本1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 10301
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1EF\U0001F1F5 JP丨日本2"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10302
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1EF\U0001F1F5 JP丨日本3"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10303
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1EF\U0001F1F5 JP丨日本4"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10304
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1F0\U0001F1F7 KR丨韩国1"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10401
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1F0\U0001F1F7 KR丨韩国2"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10402
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1F0\U0001F1F7 KR丨韩国3"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10403
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1F8\U0001F1EC SG丨新加坡1"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10501
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1F8\U0001F1EC SG丨新加坡2"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10502
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1F8\U0001F1EC SG丨新加坡3"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10503
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1F2\U0001F1FE MY丨马来西亚1"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10601
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1F5\U0001F1ED PH丨菲律宾1"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10701
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1F5\U0001F1ED PH丨菲律宾2"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10702
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1EE\U0001F1E9 ID丨印度尼西亚1"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 10801
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1EE\U0001F1F3 IN丨印度1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 10901
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F9\U0001F1ED TH丨泰国1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 11001
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1FB\U0001F1F3 VN丨越南1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 11101
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F5\U0001F1F0 PK丨巴基斯坦1-3x"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 11201
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1EE\U0001F1F1 IL丨以色利1-2x"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 11301
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F0\U0001F1FF KZ丨哈萨克斯坦1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 11401
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1E6\U0001F1EA AE丨阿联酋1-3x"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 11501
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1E6\U0001F1FA AU丨澳大利亚1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 11601
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1E6\U0001F1FA AU丨澳大利亚2"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 11602
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F3\U0001F1FF NZ丨新西兰1-3x"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 11701
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1FA\U0001F1F8 US丨加利福利亚1"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 20101
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1FA\U0001F1F8 US丨纽约1"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 20201
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1FA\U0001F1F8 US丨得克萨斯1"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 20301
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1FA\U0001F1F8 US丨佛罗里达1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 20401
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1FA\U0001F1F8 US丨华盛顿1"
+    type: vmess
+    server: f3grveyq.gabuit.com
+    port: 20501
+    uuid: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    alterId: 0
+    encryption: auto
+    udp: true
+    cipher: auto
+  - name: "\U0001F1FA\U0001F1F8 US丨伊利诺伊1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 20601
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1E8\U0001F1E6 CA丨加拿大1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 20701
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F2\U0001F1FD MX丨墨西哥1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 20801
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1E6\U0001F1F7 AR丨阿根廷1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 30101
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1E7\U0001F1F7 BR丨巴西1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 30201
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1EC\U0001F1E7 UK丨英国1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40101
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1EC\U0001F1E7 UK丨英国2"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40102
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1EC\U0001F1E7 UK丨英国3"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40103
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1EB\U0001F1F7 FR丨法国1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40201
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1E9\U0001F1EA DE丨德国1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40301
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1EE\U0001F1F9 IT丨意大利1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40401
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F3\U0001F1F1 NL丨荷兰1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40501
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F8\U0001F1EA SE丨瑞典1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40601
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F7\U0001F1FA RU丨俄罗斯1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40701
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1FA\U0001F1E6 UA丨乌克兰1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40801
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F9\U0001F1F7 TR丨土耳其1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 40901
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F5\U0001F1F1 PL丨波兰1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 41001
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1E9\U0001F1F0 DK丨丹麦1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 41101
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F1\U0001F1F9 LT丨立陶宛1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 41201
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F1\U0001F1FB LV丨拉脱维亚1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 41301
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1E8\U0001F1ED CH丨瑞士1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 41401
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F7\U0001F1F4 RO丨罗马尼亚1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 41501
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1EA\U0001F1EC EG丨埃及1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 50101
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1FF\U0001F1E6 ZA丨南非1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 50201
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+  - name: "\U0001F1F3\U0001F1EC NG丨尼日利亚1"
+    type: ss
+    server: f3grveyq.gabuit.com
+    port: 50301
+    cipher: aes-256-gcm
+    password: 13433590-0841-41BE-B9EA-A6CD37D90B5A
+    udp: true
+proxy-groups:
+  - name: 选择代理
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png'
+    type: select
+    proxies:
+      - 故障转移
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 手动选择
+      - DIRECT
+  - name: 手动选择
+    icon: >-
+      https://cdn.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png
+    type: select
+    proxies:
+      - "\U0001F1ED\U0001F1F0 HK丨香港1"
+      - "\U0001F1ED\U0001F1F0 HK丨香港2"
+      - "\U0001F1ED\U0001F1F0 HK丨香港3"
+      - "\U0001F1ED\U0001F1F0 HK丨香港4"
+      - "\U0001F1ED\U0001F1F0 HK丨香港5"
+      - "\U0001F1F9\U0001F1FC TW丨台湾1"
+      - "\U0001F1F9\U0001F1FC TW丨台湾2"
+      - "\U0001F1F9\U0001F1FC TW丨台湾3"
+      - "\U0001F1EF\U0001F1F5 JP丨日本1"
+      - "\U0001F1EF\U0001F1F5 JP丨日本2"
+      - "\U0001F1EF\U0001F1F5 JP丨日本3"
+      - "\U0001F1EF\U0001F1F5 JP丨日本4"
+      - "\U0001F1FA\U0001F1F8 US丨得克萨斯1"
+      - "\U0001F1FA\U0001F1F8 US丨佛罗里达1"
+      - "\U0001F1FA\U0001F1F8 US丨华盛顿1"
+      - "\U0001F1FA\U0001F1F8 US丨加利福利亚1"
+      - "\U0001F1FA\U0001F1F8 US丨纽约1"
+      - "\U0001F1FA\U0001F1F8 US丨伊利诺伊1"
+      - "\U0001F1F8\U0001F1EC SG丨新加坡1"
+      - "\U0001F1F8\U0001F1EC SG丨新加坡2"
+      - "\U0001F1F8\U0001F1EC SG丨新加坡3"
+      - "\U0001F1E6\U0001F1FA AU丨澳大利亚1"
+      - "\U0001F1E6\U0001F1FA AU丨澳大利亚2"
+      - "\U0001F1E8\U0001F1E6 CA丨加拿大1"
+      - "\U0001F1E9\U0001F1EA DE丨德国1"
+      - "\U0001F1EB\U0001F1F7 FR丨法国1"
+      - "\U0001F1EC\U0001F1E7 UK丨英国1"
+      - "\U0001F1EC\U0001F1E7 UK丨英国2"
+      - "\U0001F1EC\U0001F1E7 UK丨英国3"
+      - "\U0001F1EE\U0001F1E9 ID丨印度尼西亚1"
+      - "\U0001F1EE\U0001F1F3 IN丨印度1"
+      - "\U0001F1F0\U0001F1F7 KR丨韩国1"
+      - "\U0001F1F0\U0001F1F7 KR丨韩国2"
+      - "\U0001F1F0\U0001F1F7 KR丨韩国3"
+      - "\U0001F1F2\U0001F1FE MY丨马来西亚1"
+      - "\U0001F1F7\U0001F1FA RU丨俄罗斯1"
+      - "\U0001F1F9\U0001F1ED TH丨泰国1"
+      - "\U0001F1E6\U0001F1EA AE丨阿联酋1-3x"
+      - "\U0001F1E6\U0001F1F7 AR丨阿根廷1"
+      - "\U0001F1E7\U0001F1F7 BR丨巴西1"
+      - "\U0001F1E8\U0001F1ED CH丨瑞士1"
+      - "\U0001F1E9\U0001F1F0 DK丨丹麦1"
+      - "\U0001F1EA\U0001F1EC EG丨埃及1"
+      - "\U0001F1EE\U0001F1F1 IL丨以色利1-2x"
+      - "\U0001F1EE\U0001F1F9 IT丨意大利1"
+      - "\U0001F1F0\U0001F1FF KZ丨哈萨克斯坦1"
+      - "\U0001F1F1\U0001F1F9 LT丨立陶宛1"
+      - "\U0001F1F1\U0001F1FB LV丨拉脱维亚1"
+      - "\U0001F1F2\U0001F1FD MX丨墨西哥1"
+      - "\U0001F1F3\U0001F1EC NG丨尼日利亚1"
+      - "\U0001F1F3\U0001F1F1 NL丨荷兰1"
+      - "\U0001F1F3\U0001F1FF NZ丨新西兰1-3x"
+      - "\U0001F1F5\U0001F1ED PH丨菲律宾1"
+      - "\U0001F1F5\U0001F1ED PH丨菲律宾2"
+      - "\U0001F1F5\U0001F1F0 PK丨巴基斯坦1-3x"
+      - "\U0001F1F5\U0001F1F1 PL丨波兰1"
+      - "\U0001F1F7\U0001F1F4 RO丨罗马尼亚1"
+      - "\U0001F1F8\U0001F1EA SE丨瑞典1"
+      - "\U0001F1F9\U0001F1F7 TR丨土耳其1"
+      - "\U0001F1FA\U0001F1E6 UA丨乌克兰1"
+      - "\U0001F1FB\U0001F1F3 VN丨越南1"
+      - "\U0001F1FF\U0001F1E6 ZA丨南非1"
+  - name: 故障转移
+    icon: >-
+      https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Round_Robin.png
+    type: fallback
+    url: 'https://cp.cloudflare.com/generate_204'
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 手动选择
+      - DIRECT
+    interval: 180
+    tolerance: 20
+    lazy: false
+  - name: 静态资源
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Static.png'
+    type: select
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 故障转移
+      - 手动选择
+      - 直连
+  - name: OpenAI
+    icon: >-
+      https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/chatgpt.png
+    type: select
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 故障转移
+      - 手动选择
+      - 直连
+  - name: Gemini
+    icon: 'https://cdn.simpleicons.org/googlegemini'
+    type: select
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 故障转移
+      - 手动选择
+      - 直连
+  - name: Claude
+    icon: 'https://cdn.simpleicons.org/claude'
+    type: select
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 故障转移
+      - 手动选择
+      - 直连
+  - name: GitHub
+    icon: 'https://cdn.simpleicons.org/github'
+    type: select
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 故障转移
+      - 手动选择
+      - 直连
+  - name: Telegram
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png'
+    type: select
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 故障转移
+      - 手动选择
+      - 直连
+  - name: YouTube
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png'
+    type: select
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 故障转移
+      - 手动选择
+      - 直连
+  - name: Bilibili
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png'
+    type: select
+    proxies:
+      - 直连
+      - 台湾节点
+      - 香港节点
+  - name: Netflix
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png'
+    type: select
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 故障转移
+      - 手动选择
+      - 直连
+  - name: Steam
+    icon: 'https://cdn.simpleicons.org/steam'
+    type: select
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 故障转移
+      - 手动选择
+      - 直连
+  - name: SSH(22端口)
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Server.png'
+    type: select
+    proxies:
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+      - 故障转移
+      - 手动选择
+      - 直连
+  - name: 直连
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png'
+    type: select
+    proxies:
+      - DIRECT
+      - 选择代理
+  - name: 广告拦截
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png'
+    type: select
+    proxies:
+      - REJECT
+      - REJECT-DROP
+      - 直连
+  - name: 香港节点
+    icon: >-
+      https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hong_Kong.png
+    include-all: true
+    filter: "(?i)香港|港|HK|hk|Hong Kong|HongKong|hongkong|\U0001F1ED\U0001F1F0"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 台湾节点
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Taiwan.png'
+    include-all: true
+    filter: "(?i)台|新北|彰化|TW|Taiwan|\U0001F1F9\U0001F1FC"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 日本节点
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Japan.png'
+    include-all: true
+    filter: "(?i)日本|川日|东京|大阪|泉日|埼玉|沪日|深日|JP|Japan|\U0001F1EF\U0001F1F5"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 韩国节点
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Korea.png'
+    include-all: true
+    filter: "(?i)KR|Korea|KOR|首尔|韩|韓|\U0001F1F0\U0001F1F7"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 新加坡节点
+    icon: >-
+      https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Singapore.png
+    include-all: true
+    filter: "(?i)新加坡|坡|狮城|SG|Singapore|\U0001F1F8\U0001F1EC"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 马来西亚节点
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Malaysia.png'
+    include-all: true
+    filter: "(?i)马来西亚|马来|MY|Malaysia|\U0001F1F2\U0001F1FE"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 印度节点
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/India.png'
+    include-all: true
+    filter: "(?i)印度|IN|India|\U0001F1EE\U0001F1F3"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 泰国节点
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Thailand.png'
+    include-all: true
+    filter: "(?i)泰国|泰|TH|Thailand|\U0001F1F9\U0001F1ED"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 澳大利亚节点
+    icon: >-
+      https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Australia.png
+    include-all: true
+    filter: "(?i)澳洲|澳大利亚|AU|Australia|\U0001F1E6\U0001F1FA"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 美国节点
+    icon: >-
+      https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_States.png
+    include-all: true
+    filter: "(?i)美国|美|US|United States|\U0001F1FA\U0001F1F8"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 加拿大节点
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Canada.png'
+    include-all: true
+    filter: "(?i)加拿大|Canada|CA|\U0001F1E8\U0001F1E6"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 英国节点
+    icon: >-
+      https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_Kingdom.png
+    include-all: true
+    filter: "(?i)英国|United Kingdom|UK|伦敦|London|\U0001F1EC\U0001F1E7"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 法国节点
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/France.png'
+    include-all: true
+    filter: "(?i)法国|法|FR|France|\U0001F1EB\U0001F1F7"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 德国节点
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Germany.png'
+    include-all: true
+    filter: "(?i)德国|德|DE|Germany|\U0001F1E9\U0001F1EA"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: 俄罗斯节点
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Russia.png'
+    include-all: true
+    filter: "(?i)俄罗斯|俄|RU|Russia|\U0001F1F7\U0001F1FA"
+    exclude-filter: '0\.[0-5]|低倍率|省流|大流量|实验性'
+    type: url-test
+    url: 'https://cp.cloudflare.com/generate_204'
+    interval: 60
+    tolerance: 20
+    lazy: false
+  - name: GLOBAL
+    icon: 'https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png'
+    include-all: true
+    type: select
+    proxies:
+      - 选择代理
+      - 手动选择
+      - 故障转移
+      - 静态资源
+      - OpenAI
+      - Gemini
+      - Claude
+      - GitHub
+      - Telegram
+      - YouTube
+      - Bilibili
+      - Netflix
+      - Steam
+      - SSH(22端口)
+      - 直连
+      - 广告拦截
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 韩国节点
+      - 新加坡节点
+      - 马来西亚节点
+      - 印度节点
+      - 泰国节点
+      - 澳大利亚节点
+      - 美国节点
+      - 加拿大节点
+      - 英国节点
+      - 法国节点
+      - 德国节点
+      - 俄罗斯节点
+rule-providers:
+  ADBlock:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    url: 'https://adrules.top/adrules-mihomo.mrs'
+    path: ./ruleset/ADBlock.mrs
+  TruthSocial:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/TruthSocial.list
+    path: ./ruleset/TruthSocial.list
+  SogouInput:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: 'https://ruleset.skk.moe/Clash/non_ip/sogouinput.txt'
+    path: ./ruleset/SogouInput.txt
+  StaticResources:
+    type: http
+    behavior: domain
+    format: text
+    interval: 86400
+    url: 'https://ruleset.skk.moe/Clash/domainset/cdn.txt'
+    path: ./ruleset/StaticResources.txt
+  CDNResources:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: 'https://ruleset.skk.moe/Clash/non_ip/cdn.txt'
+    path: ./ruleset/CDNResources.txt
+  TikTok:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/TikTok.list
+    path: ./ruleset/TikTok.list
+  EHentai:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/EHentai.list
+    path: ./ruleset/EHentai.list
+  SteamFix:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/SteamFix.list
+    path: ./ruleset/SteamFix.list
+  GoogleFCM:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/FirebaseCloudMessaging.list
+    path: ./ruleset/FirebaseCloudMessaging.list
+  AdditionalFilter:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/AdditionalFilter.list
+    path: ./ruleset/AdditionalFilter.list
+  AdditionalCDNResources:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/AdditionalCDNResources.list
+    path: ./ruleset/AdditionalCDNResources.list
+  Crypto:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/Crypto.list
+    path: ./ruleset/Crypto.list
+  OpenAI:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.list
+    path: ./ruleset/OpenAI.list
+  Gemini:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Gemini/Gemini.list
+    path: ./ruleset/Gemini.list
+  Claude:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Claude/Claude.list
+    path: ./ruleset/Claude.list
+  GitHub:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.list
+    path: ./ruleset/GitHub.list
+  Steam:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Steam/Steam.list
+    path: ./ruleset/Steam.list
+  SteamCN:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.list
+    path: ./ruleset/SteamCN.list
+rules:
+  - 'AND,(DST-PORT,443),(NETWORK,UDP),REJECT'
+  - 'RULE-SET,ADBlock,广告拦截'
+  - 'RULE-SET,AdditionalFilter,广告拦截'
+  - 'RULE-SET,SogouInput,直连'
+  - 'RULE-SET,SteamCN,直连'
+  - 'RULE-SET,SteamFix,直连'
+  - 'GEOSITE,PRIVATE,直连'
+  - 'GEOSITE,CN,直连'
+  - 'GEOIP,PRIVATE,直连'
+  - 'GEOIP,CN,直连'
+  - 'GEOSITE,GOOGLE-PLAY@CN,直连'
+  - 'GEOSITE,MICROSOFT@CN,直连'
+  - 'RULE-SET,GoogleFCM,直连'
+  - 'RULE-SET,OpenAI,OpenAI'
+  - 'RULE-SET,Gemini,Gemini'
+  - 'RULE-SET,Claude,Claude'
+  - 'RULE-SET,GitHub,GitHub'
+  - 'RULE-SET,Steam,Steam'
+  - 'GEOSITE,TELEGRAM,Telegram'
+  - 'GEOSITE,YOUTUBE,YouTube'
+  - 'GEOSITE,NETFLIX,Netflix'
+  - 'GEOIP,NETFLIX,Netflix'
+  - 'GEOIP,TELEGRAM,Telegram'
+  - 'GEOSITE,BILIBILI,Bilibili'
+  - 'DST-PORT,22,SSH(22端口)'
+  - 'GEOSITE,google,Gemini'
+  - 'RULE-SET,TruthSocial,手动选择'
+  - 'RULE-SET,Crypto,手动选择'
+  - 'RULE-SET,EHentai,手动选择'
+  - 'RULE-SET,TikTok,手动选择'
+  - 'GEOSITE,SPOTIFY,手动选择'
+  - 'GEOSITE,BAHAMUT,手动选择'
+  - 'GEOSITE,PIKPAK,手动选择'
+  - 'RULE-SET,StaticResources,静态资源'
+  - 'RULE-SET,CDNResources,静态资源'
+  - 'RULE-SET,AdditionalCDNResources,静态资源'
+  - 'GEOSITE,GFW,选择代理'
+  - 'MATCH,选择代理'
+sniffer:
+  sniff:
+    TLS:
+      ports:
+        - 443
+        - 8443
+    HTTP:
+      ports:
+        - 80
+        - 8080
+        - 8880
+    QUIC:
+      ports:
+        - 443
+        - 8443
+  override-destination: false
+  enable: true
+  force-dns-mapping: true
+  skip-domain:
+    - Mijia Cloud
+    - dlg.io.mi.com
+    - +.push.apple.com
+dns:
+  enable: true
+  ipv6: false
+  prefer-h3: true
+  enhanced-mode: redir-host
+  default-nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+  nameserver:
+    - system
+    - 223.5.5.5
+    - 119.29.29.29
+    - 180.184.1.1
+  fallback:
+    - 'quic://dns0.eu'
+    - 'https://dns.cloudflare.com/dns-query'
+    - 'https://dns.sb/dns-query'
+    - 'tcp://208.67.222.222'
+    - 'tcp://8.26.56.2'
+  proxy-server-nameserver:
+    - 'https://dns.alidns.com/dns-query'
+    - 'tls://dot.pub'
+geodata-mode: true
+geox-url:
+  geoip: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geoip.dat'
+  geosite: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat'
+  mmdb: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/Country.mmdb'
+  asn: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/GeoLite2-ASN.mmdb'
