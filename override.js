@@ -579,13 +579,13 @@ function buildProxyGroups({
     return [
         {
             "name": PROXY_GROUPS.SELECT,
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png", // 替换图标
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png", 
             "type": "select",
             "proxies": defaultSelector
         },
         {
             "name": PROXY_GROUPS.MANUAL,
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/List.png", // 替换图标
+            "icon": "https://cdn.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png", 
             "include-all": true,
             "type": "select"
         },
@@ -781,3 +781,4 @@ function main(config) {
 
     return resultConfig;
 }
+
