@@ -135,7 +135,7 @@ function buildBaseLists({ landing, lowCost, countryGroupNames }) {
     return { defaultSelector, defaultFallback, subgroupProxies, defaultProxiesDirect };
 }
 
-
+// 【修复】只保留原始脚本中有效的 rule-providers
 const ruleProviders = {
     "ADBlock": {
         "type": "http",
@@ -144,47 +144,6 @@ const ruleProviders = {
         "interval": 86400,
         "url": "https://adrules.top/adrules-mihomo.mrs",
         "path": "./ruleset/ADBlock.mrs"
-    },
-    "OpenAI": {
-        "type": "http",
-        "behavior": "domain",
-        "format": "yaml",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.yaml",
-        "path": "./ruleset/OpenAI.yaml"
-    },
-    "Gemini": {
-        "type": "http",
-        "behavior": "domain",
-        "format": "yaml",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Gemini/Gemini.yaml",
-        "path": "./ruleset/Gemini.yaml"
-    },
-    "Claude": {
-        "type": "http",
-        "behavior": "domain",
-        "format": "yaml",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Claude/Claude.yaml",
-        "path": "./ruleset/Claude.yaml"
-    },
-    "GitHub": {
-        "type": "http",
-        "behavior": "domain",
-        "format": "yaml",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.yaml",
-        "path": "./ruleset/GitHub.yaml"
-    },
-    // 【新增】SteamCN 规则
-    "SteamCN": {
-        "type": "http",
-        "behavior": "domain",
-        "format": "yaml",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.yaml",
-        "path": "./ruleset/SteamCN.yaml"
     },
     "TruthSocial": {
         "type": "http",
@@ -281,11 +240,10 @@ const baseRules = [
     // --- 1. 广告和隐私规则 (最高优先级) ---
     `RULE-SET,ADBlock,广告拦截`,
     `RULE-SET,AdditionalFilter,广告拦截`,
-    `RULE-SET,SogouInput,${PROXY_GROUPS.DIRECT}`,
+    `RULE-SET,SogouInput,${PROXY_GROUPS.DIRECT}`, // (修改)
 
-    // --- 2. 高优先级直连规则 (CN/Private/SteamCN) ---
-    // 【修复】将 SteamCN 提到 GEOSITE,CN 之前，确保 steamcontent.com 被匹配
-    `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT}`,
+    // --- 2. 高优先级直连规则 (CN/Private/SteamFix) ---
+    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留) SteamCN 流量
     `GEOSITE,PRIVATE,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,CN,${PROXY_GROUPS.DIRECT}`,
     `GEOIP,PRIVATE,${PROXY_GROUPS.DIRECT}`,
@@ -293,44 +251,39 @@ const baseRules = [
     `GEOSITE,GOOGLE-PLAY@CN,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,MICROSOFT@CN,${PROXY_GROUPS.DIRECT}`,
     `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
-    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // 原始 SteamFix 规则
 
     // --- 3. 特定服务规则 (AI, 媒体等) ---
-    // 【修复】这些必须在 GFW 规则之前
-    "RULE-SET,OpenAI,OpenAI",
-    "RULE-SET,Claude,Claude",
-    "RULE-SET,GitHub,GitHub",
-    "GEOSITE,TELEGRAM,Telegram",
-    "GEOSITE,YOUTUBE,YouTube",
-    "GEOSITE,NETFLIX,Netflix",
-    "GEOIP,NETFLIX,Netflix",
-    "GEOIP,TELEGRAM,Telegram",
-    "GEOSITE,BILIBILI,Bilibili",
+    // 【修复】使用 GEOSITE 和手动 DOMAIN 替代无效的 YAML
+    `GEOSITE,openai,OpenAI`,
+    `GEOSITE,github,GitHub`,
+    `DOMAIN-SUFFIX,anthropic.com,Claude`,
+    `DOMAIN-SUFFIX,claude.ai,Claude`,
+    `GEOSITE,TELEGRAM,Telegram`,
+    `GEOSITE,YOUTUBE,YouTube`,
+    `GEOSITE,NETFLIX,Netflix`,
+    `GEOIP,NETFLIX,Netflix`,
+    `GEOIP,TELEGRAM,Telegram`,
+    `GEOSITE,BILIBILI,Bilibili`,
     "DST-PORT,22,SSH(22端口)",
 
     // --- 4. Google/Gemini 合并规则 ---
-    // 【修复】这必须在 GFW 规则之前
-    `RULE-SET,Gemini,Gemini`,
-    `GEOSITE,google,Gemini`,
+    `GEOSITE,google,Gemini`, // (GEOSITE,CN 在此之前，所以安全)
 
     // --- 5. 被删除的分组 (指向手动) ---
-    // 【修复】这必须在 GFW 规则之前
-    `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL}`,
-    `RULE-SET,Crypto,${PROXY_GROUPS.MANUAL}`,
-    `RULE-SET,EHentai,${PROXY_GROUPS.MANUAL}`,
-    `RULE-SET,TikTok,${PROXY_GROUPS.MANUAL}`,
-    `GEOSITE,SPOTIFY,${PROXY_GROUPS.MANUAL}`,
-    `GEOSITE,BAHAMUT,${PROXY_GROUPS.MANUAL}`,
-    `GEOSITE,PIKPAK,${PROXY_GROUPS.MANUAL}`,
+    `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL}`, // (修改)
+    `RULE-SET,Crypto,${PROXY_GROUPS.MANUAL}`, // (修改)
+    `RULE-SET,EHentai,${PROXY_GROUPS.MANUAL}`, // (修改)
+    `RULE-SET,TikTok,${PROXY_GROUPS.MANUAL}`, // (修改)
+    `GEOSITE,SPOTIFY,${PROXY_GROUPS.MANUAL}`, // (修改)
+    `GEOSITE,BAHAMUT,${PROXY_GROUPS.MANUAL}`, // (修改)
+    `GEOSITE,PIKPAK,${PROXY_GROUPS.MANUAL}`, // (修改)
     
     // --- 6. 静态资源 ---
-    // 【修复】这必须在 GFW 规则之前
     `RULE-SET,StaticResources,静态资源`,
     `RULE-SET,CDNResources,静态资源`,
     `RULE-SET,AdditionalCDNResources,静态资源`,
 
     // --- 7. GFW 规则 ---
-    // 【修复】GFW 规则必须在所有特定规则之后
     `GEOSITE,GFW,${PROXY_GROUPS.SELECT}`,
 
     // --- 8. 最终回退规则 ---
@@ -640,41 +593,43 @@ function buildProxyGroups({
             "type": "select",
             "proxies": subgroupProxies, // 【修复】使用子分组列表
         },
+        // 【修复】重建 AI 分组
         {
             "name": "OpenAI",
             "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/chatgpt.png",
             "type": "select",
-            "proxies": subgroupProxies // 【修复】使用子分组列表
+            "proxies": subgroupProxies
         },
         {
             "name": "Gemini",
             "icon": "https://cdn.simpleicons.org/googlegemini", 
             "type": "select",
-            "proxies": subgroupProxies // 【修复】使用子分组列表
+            "proxies": subgroupProxies
         },
         {
             "name": "Claude",
             "icon": "https://cdn.simpleicons.org/claude", 
             "type": "select",
-            "proxies": subgroupProxies // 【修复】使用子分组列表
+            "proxies": subgroupProxies
         },
+        // 【修复】重建 GitHub 分组
         {
             "name": "GitHub",
             "icon": "https://cdn.simpleicons.org/github",
             "type": "select",
-            "proxies": subgroupProxies // 【修复】使用子分组列表
+            "proxies": subgroupProxies
         },
         {
             "name": "Telegram",
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png",
             "type": "select",
-            "proxies": subgroupProxies // 【修复】使用子分组列表
+            "proxies": subgroupProxies 
         },
         {
             "name": "YouTube",
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png",
             "type": "select",
-            "proxies": subgroupProxies // 【修复】使用子分组列表
+            "proxies": subgroupProxies 
         },
         {
             "name": "Bilibili",
@@ -686,14 +641,13 @@ function buildProxyGroups({
             "name": "Netflix",
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png",
             "type": "select",
-            "proxies": subgroupProxies // 【修复】使用子分组列表
+            "proxies": subgroupProxies 
         },
-        // 【删除】Steam 分组
         {
             "name": "SSH(22端口)",
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Server.png",
             "type": "select",
-            "proxies": subgroupProxies // 【修复】使用子分组列表
+            "proxies": subgroupProxies 
         },
         {
             "name": PROXY_GROUPS.DIRECT,
@@ -711,6 +665,7 @@ function buildProxyGroups({
                 "REJECT", "REJECT-DROP",  PROXY_GROUPS.DIRECT
             ]
         },
+        // 【删除】所有被移除的分组
         (lowCost) ? {
             "name": PROXY_GROUPS.LOW_COST,
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Lab.png",
