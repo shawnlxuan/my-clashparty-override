@@ -183,7 +183,7 @@ const ruleProviders = {
         "behavior": "domain",
         "format": "yaml",
         "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/SteamCN/SteamCN.yaml",
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.yaml",
         "path": "./ruleset/SteamCN.yaml"
     },
     "TruthSocial": {
@@ -234,7 +234,14 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/EHentai.list",
         "path": "./ruleset/EHentai.list"
     },
-    // 【修改】恢复原始的 GoogleFCM 规则
+    "SteamFix": {
+        "type": "http",
+        "behavior": "classical",
+        "format": "text",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/SteamFix.list",
+        "path": "./ruleset/SteamFix.list"
+    },
     "GoogleFCM": {
         "type": "http",
         "behavior": "classical",
@@ -269,15 +276,15 @@ const ruleProviders = {
     }
 }
 
-// 【修复】重排所有规则顺序
+// 【修复】彻底重排所有规则的优先级
 const baseRules = [
-    // --- 1. 广告和隐私规则 ---
+    // --- 1. 广告和隐私规则 (最高优先级) ---
     `RULE-SET,ADBlock,广告拦截`,
     `RULE-SET,AdditionalFilter,广告拦截`,
     `RULE-SET,SogouInput,${PROXY_GROUPS.DIRECT}`,
 
-    // --- 2. 高优先级直连规则 (CN/Private) ---
-    // 【修复】将 SteamCN 提到最高优先级
+    // --- 2. 高优先级直连规则 (CN/Private/SteamCN) ---
+    // 【修复】将 SteamCN 提到 GEOSITE,CN 之前，确保 steamcontent.com 被匹配
     `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,PRIVATE,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,CN,${PROXY_GROUPS.DIRECT}`,
@@ -286,9 +293,10 @@ const baseRules = [
     `GEOSITE,GOOGLE-PLAY@CN,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,MICROSOFT@CN,${PROXY_GROUPS.DIRECT}`,
     `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
-    // 【删除】SteamFix
+    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // 原始 SteamFix 规则
 
     // --- 3. 特定服务规则 (AI, 媒体等) ---
+    // 【修复】这些必须在 GFW 规则之前
     "RULE-SET,OpenAI,OpenAI",
     "RULE-SET,Claude,Claude",
     "RULE-SET,GitHub,GitHub",
@@ -301,10 +309,12 @@ const baseRules = [
     "DST-PORT,22,SSH(22端口)",
 
     // --- 4. Google/Gemini 合并规则 ---
+    // 【修复】这必须在 GFW 规则之前
     `RULE-SET,Gemini,Gemini`,
     `GEOSITE,google,Gemini`,
 
     // --- 5. 被删除的分组 (指向手动) ---
+    // 【修复】这必须在 GFW 规则之前
     `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL}`,
     `RULE-SET,Crypto,${PROXY_GROUPS.MANUAL}`,
     `RULE-SET,EHentai,${PROXY_GROUPS.MANUAL}`,
@@ -314,12 +324,16 @@ const baseRules = [
     `GEOSITE,PIKPAK,${PROXY_GROUPS.MANUAL}`,
     
     // --- 6. 静态资源 ---
+    // 【修复】这必须在 GFW 规则之前
     `RULE-SET,StaticResources,静态资源`,
     `RULE-SET,CDNResources,静态资源`,
     `RULE-SET,AdditionalCDNResources,静态资源`,
 
-    // --- 7. 最终回退规则 ---
+    // --- 7. GFW 规则 ---
+    // 【修复】GFW 规则必须在所有特定规则之后
     `GEOSITE,GFW,${PROXY_GROUPS.SELECT}`,
+
+    // --- 8. 最终回退规则 ---
     `MATCH,${PROXY_GROUPS.SELECT}`
 ];
 
@@ -786,4 +800,3 @@ function main(config) {
 
     return resultConfig;
 }
-
