@@ -183,7 +183,7 @@ const ruleProviders = {
         "behavior": "domain",
         "format": "yaml",
         "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.yaml",
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/SteamCN/SteamCN.yaml",
         "path": "./ruleset/SteamCN.yaml"
     },
     "TruthSocial": {
@@ -786,3 +786,4 @@ function main(config) {
 
     return resultConfig;
 }
+
