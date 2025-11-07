@@ -234,6 +234,7 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/EHentai.list",
         "path": "./ruleset/EHentai.list"
     },
+    // 【修改】恢复原始的 GoogleFCM 规则
     "GoogleFCM": {
         "type": "http",
         "behavior": "classical",
@@ -276,6 +277,8 @@ const baseRules = [
     `RULE-SET,SogouInput,${PROXY_GROUPS.DIRECT}`,
 
     // --- 2. 高优先级直连规则 (CN/Private) ---
+    // 【修复】将 SteamCN 提到最高优先级
+    `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,PRIVATE,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,CN,${PROXY_GROUPS.DIRECT}`,
     `GEOIP,PRIVATE,${PROXY_GROUPS.DIRECT}`,
@@ -283,8 +286,7 @@ const baseRules = [
     `GEOSITE,GOOGLE-PLAY@CN,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,MICROSOFT@CN,${PROXY_GROUPS.DIRECT}`,
     `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
-    // 【新增】SteamCN 规则，高优先级直连
-    `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT}`,
+    // 【删除】SteamFix
 
     // --- 3. 特定服务规则 (AI, 媒体等) ---
     "RULE-SET,OpenAI,OpenAI",
