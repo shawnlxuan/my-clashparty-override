@@ -108,11 +108,19 @@ function buildBaseLists({ landing, lowCost, countryGroupNames }) {
         "DIRECT"
     );
 
-    // 默认的代理列表，用于大多数策略组
+    // 默认的代理列表，用于 "静态资源" 等
     const defaultProxies = buildList(
         PROXY_GROUPS.SELECT,
         countryGroupNames,
         lowCost && PROXY_GROUPS.LOW_COST,
+        PROXY_GROUPS.MANUAL,
+        PROXY_GROUPS.DIRECT
+    );
+
+    // 【修复】创建媒体/AI专用列表，不包含 "选择代理" 作为首选项
+    const mediaProxies = buildList(
+        countryGroupNames,
+        PROXY_GROUPS.SELECT,
         PROXY_GROUPS.MANUAL,
         PROXY_GROUPS.DIRECT
     );
@@ -135,7 +143,8 @@ function buildBaseLists({ landing, lowCost, countryGroupNames }) {
         "DIRECT"
     );
 
-    return { defaultProxies, defaultProxiesDirect, defaultSelector, defaultFallback };
+    // 【修复】返回新创建的 mediaProxies
+    return { defaultProxies, mediaProxies, defaultProxiesDirect, defaultSelector, defaultFallback };
 }
 
 const ruleProviders = {
@@ -147,7 +156,6 @@ const ruleProviders = {
         "url": "https://adrules.top/adrules-mihomo.mrs",
         "path": "./ruleset/ADBlock.mrs"
     },
-    // 【新增】OpenAI 规则提供者
     "OpenAI": {
         "type": "http",
         "behavior": "domain",
@@ -156,7 +164,6 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.yaml",
         "path": "./ruleset/OpenAI.yaml"
     },
-    // 【新增】Gemini 规则提供者
     "Gemini": {
         "type": "http",
         "behavior": "domain",
@@ -165,7 +172,6 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Gemini/Gemini.yaml",
         "path": "./ruleset/Gemini.yaml"
     },
-    // 【新增】Claude 规则提供者
     "Claude": {
         "type": "http",
         "behavior": "domain",
@@ -174,7 +180,6 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Claude/Claude.yaml",
         "path": "./ruleset/Claude.yaml"
     },
-    // 【新增】GitHub 规则提供者
     "GitHub": {
         "type": "http",
         "behavior": "domain",
@@ -276,9 +281,7 @@ const ruleProviders = {
 const baseRules = [
     `RULE-SET,ADBlock,广告拦截`,
     `RULE-SET,AdditionalFilter,广告拦截`,
-    // 【修改】搜狗输入法是国内服务，定向到 "直连"
     `RULE-SET,SogouInput,${PROXY_GROUPS.DIRECT}`,
-    // 【修改】以下规则（非国内）定向到 "手动选择"
     `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL}`,
     `RULE-SET,StaticResources,静态资源`,
     `RULE-SET,CDNResources,静态资源`,
@@ -289,17 +292,15 @@ const baseRules = [
     `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`,
     `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,GOOGLE-PLAY@CN,${PROXY_GROUPS.DIRECT}`,
-    // 【删除】旧 AI 规则
-    // 【新增】新的 AI 规则
     "RULE-SET,OpenAI,OpenAI",
     "RULE-SET,Gemini,Gemini",
+    // 【修复】添加 Gemini 辅助域名规则，并指向 "Gemini" 分组
+    "DOMAIN-SUFFIX,clients6.google.com,Gemini",
     "RULE-SET,Claude,Claude",
-    // 【新增】GitHub 规则
     "RULE-SET,GitHub,GitHub",
     "GEOSITE,TELEGRAM,Telegram",
     "GEOSITE,YOUTUBE,YouTube",
     "GEOSITE,NETFLIX,Netflix",
-    // 【修改】以下规则（非国内）定向到 "手动选择"
     `GEOSITE,SPOTIFY,${PROXY_GROUPS.MANUAL}`,
     `GEOSITE,BAHAMUT,${PROXY_GROUPS.MANUAL}`,
     "GEOSITE,BILIBILI,Bilibili",
@@ -561,6 +562,7 @@ function buildProxyGroups({
     countryProxyGroups,
     lowCost,
     defaultProxies,
+    mediaProxies, // 【修复】接收新列表
     defaultProxiesDirect,
     defaultSelector,
     defaultFallback
@@ -577,13 +579,13 @@ function buildProxyGroups({
     return [
         {
             "name": PROXY_GROUPS.SELECT,
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Proxy.png",
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png", // 替换图标
             "type": "select",
             "proxies": defaultSelector
         },
         {
             "name": PROXY_GROUPS.MANUAL,
-            "icon": "https://cdn.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png",
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/List.png", // 替换图标
             "include-all": true,
             "type": "select"
         },
@@ -604,7 +606,7 @@ function buildProxyGroups({
         } : null,
         {
             "name": PROXY_GROUPS.FALLBACK,
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bypass.png",
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Round_Robin.png", // 替换图标
             "type": "fallback",
             "url": "https://cp.cloudflare.com/generate_204",
             "proxies": defaultFallback,
@@ -614,48 +616,45 @@ function buildProxyGroups({
         },
         {
             "name": "静态资源",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png",
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Static.png", // 替换图标
             "type": "select",
-            "proxies": defaultProxies,
+            "proxies": defaultProxies, // "静态资源" 仍使用 defaultProxies
         },
-        // 【删除】旧 AI 分组
-        // 【新增】OpenAI, Gemini, Claude 分组
         {
             "name": "OpenAI",
             "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/chatgpt.png",
             "type": "select",
-            "proxies": defaultProxies
+            "proxies": mediaProxies // 【修复】使用 mediaProxies
         },
         {
             "name": "Gemini",
-            "icon": "https://cdn.simpleicons.org/googlegemini",
+            "icon": "https://cdn.simpleicons.org/googlegemini", // 替换图标
             "type": "select",
-            "proxies": defaultProxies
+            "proxies": mediaProxies // 【修复】使用 mediaProxies
         },
         {
             "name": "Claude",
-            "icon": "https://cdn.simpleicons.org/claude", 
+            "icon": "https://cdn.simpleicons.org/claude", // 替换图标
             "type": "select",
-            "proxies": defaultProxies
+            "proxies": mediaProxies // 【修复】使用 mediaProxies
         },
-        // 【新增】GitHub 分组
         {
             "name": "GitHub",
             "icon": "https://cdn.simpleicons.org/github",
             "type": "select",
-            "proxies": defaultProxies
+            "proxies": mediaProxies // 【修复】使用 mediaProxies
         },
         {
             "name": "Telegram",
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png",
             "type": "select",
-            "proxies": defaultProxies
+            "proxies": mediaProxies // 【修复】使用 mediaProxies
         },
         {
             "name": "YouTube",
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png",
             "type": "select",
-            "proxies": defaultProxies
+            "proxies": mediaProxies // 【修复】使用 mediaProxies
         },
         {
             "name": "Bilibili",
@@ -667,22 +666,14 @@ function buildProxyGroups({
             "name": "Netflix",
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png",
             "type": "select",
-            "proxies": defaultProxies
+            "proxies": mediaProxies // 【修复】使用 mediaProxies
         },
-        // 【删除】Spotify 分组
-        // 【删除】TikTok 分组
-        // 【删除】E-Hentai 分组
-        // 【删除】PikPak 分组
-        // 【删除】Truth Social 分组
-        // 【删除】Bahamut 分组
-        // 【删除】Crypto 分组
         {
             "name": "SSH(22端口)",
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Server.png",
             "type": "select",
-            "proxies": defaultProxies
+            "proxies": defaultProxies // SSH 使用 defaultProxies
         },
-        // 【删除】搜狗输入法 分组
         {
             "name": PROXY_GROUPS.DIRECT,
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png",
@@ -722,6 +713,7 @@ function main(config) {
     // 构建基础数组
     const {
         defaultProxies,
+        mediaProxies, // 【修复】获取新列表
         defaultProxiesDirect,
         defaultSelector,
         defaultFallback
@@ -737,6 +729,7 @@ function main(config) {
         countryProxyGroups,
         lowCost,
         defaultProxies,
+        mediaProxies, // 【修复】传入新列表
         defaultProxiesDirect,
         defaultSelector,
         defaultFallback
@@ -788,4 +781,3 @@ function main(config) {
 
     return resultConfig;
 }
-
