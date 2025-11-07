@@ -153,7 +153,6 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.yaml",
         "path": "./ruleset/OpenAI.yaml"
     },
-    // 【修复】恢复 Gemini 规则提供者
     "Gemini": {
         "type": "http",
         "behavior": "domain",
@@ -177,6 +176,24 @@ const ruleProviders = {
         "interval": 86400,
         "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.yaml",
         "path": "./ruleset/GitHub.yaml"
+    },
+    // 【保留】Steam 规则 (规则列表需要)
+    "Steam": {
+        "type": "http",
+        "behavior": "domain",
+        "format": "yaml",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Steam/Steam.yaml",
+        "path": "./ruleset/Steam.yaml"
+    },
+    // 【保留】SteamCN 规则 (规则列表需要)
+    "SteamCN": {
+        "type": "http",
+        "behavior": "domain",
+        "format": "yaml",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.yaml",
+        "path": "./ruleset/SteamCN.yaml"
     },
     "TruthSocial": {
         "type": "http",
@@ -226,14 +243,6 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/EHentai.list",
         "path": "./ruleset/EHentai.list"
     },
-    "SteamFix": {
-        "type": "http",
-        "behavior": "classical",
-        "format": "text",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/SteamFix.list",
-        "path": "./ruleset/SteamFix.list"
-    },
     "GoogleFCM": {
         "type": "http",
         "behavior": "classical",
@@ -268,7 +277,6 @@ const ruleProviders = {
     }
 }
 
-// 【修复】重排所有规则顺序
 const baseRules = [
     // --- 1. 广告和隐私规则 ---
     `RULE-SET,ADBlock,广告拦截`,
@@ -283,7 +291,8 @@ const baseRules = [
     `GEOSITE,GOOGLE-PLAY@CN,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,MICROSOFT@CN,${PROXY_GROUPS.DIRECT}`,
     `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
-    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`,
+    // 【修改】SteamCN 规则，高优先级直连
+    `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT}`,
 
     // --- 3. 特定服务规则 (AI, 媒体等) ---
     "RULE-SET,OpenAI,OpenAI",
@@ -292,15 +301,16 @@ const baseRules = [
     "GEOSITE,TELEGRAM,Telegram",
     "GEOSITE,YOUTUBE,YouTube",
     "GEOSITE,NETFLIX,Netflix",
-    "GEOIP,NETFLIX,Netflix,no-resolve",
-    "GEOIP,TELEGRAM,Telegram,no-resolve",
+    "GEOIP,NETFLIX,Netflix",
+    "GEOIP,TELEGRAM,Telegram",
     "GEOSITE,BILIBILI,Bilibili",
     "DST-PORT,22,SSH(22端口)",
+    // 【修改】Steam (Global) 规则指向 "选择代理"
+    `RULE-SET,Steam,${PROXY_GROUPS.SELECT}`,
 
     // --- 4. Google/Gemini 合并规则 ---
-    // (CN 规则已在上方被捕获)
-    `RULE-SET,Gemini,Gemini`, // 优先使用规则集
-    `GEOSITE,google,Gemini`, // 捕获 gstatic 等所有剩余 google 流量
+    `RULE-SET,Gemini,Gemini`,
+    `GEOSITE,google,Gemini`,
 
     // --- 5. 被删除的分组 (指向手动) ---
     `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL}`,
@@ -672,6 +682,7 @@ function buildProxyGroups({
             "type": "select",
             "proxies": subgroupProxies // 【修复】使用子分组列表
         },
+        // 【删除】Steam 分组
         {
             "name": "SSH(22端口)",
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Server.png",
