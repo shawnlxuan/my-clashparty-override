@@ -290,11 +290,13 @@ const baseRules = [
     `RULE-SET,EHentai,${PROXY_GROUPS.MANUAL}`,
     `RULE-SET,TikTok,${PROXY_GROUPS.MANUAL}`,
     `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`,
-    `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
+    // 【修改】将 GoogleFCM 指向 Gemini 组
+    `RULE-SET,GoogleFCM,Gemini`,
+    // 【修改】添加 GEOSITE,GOOGLE-!CN 规则，捕获所有非中国 Google 服务
+    `GEOSITE,GOOGLE-!CN,Gemini`,
     `GEOSITE,GOOGLE-PLAY@CN,${PROXY_GROUPS.DIRECT}`,
     "RULE-SET,OpenAI,OpenAI",
     "RULE-SET,Gemini,Gemini",
-    // 【修复】添加 Gemini 辅助域名规则，并指向 "Gemini" 分组
     "DOMAIN-SUFFIX,clients6.google.com,Gemini",
     "RULE-SET,Claude,Claude",
     "RULE-SET,GitHub,GitHub",
@@ -781,4 +783,3 @@ function main(config) {
 
     return resultConfig;
 }
-
