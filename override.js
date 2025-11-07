@@ -164,14 +164,7 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.yaml",
         "path": "./ruleset/OpenAI.yaml"
     },
-    "Gemini": {
-        "type": "http",
-        "behavior": "domain",
-        "format": "yaml",
-        "interval": 86400,
-        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Gemini/Gemini.yaml",
-        "path": "./ruleset/Gemini.yaml"
-    },
+    // 【修改】删除 Gemini 规则提供者
     "Claude": {
         "type": "http",
         "behavior": "domain",
@@ -290,14 +283,16 @@ const baseRules = [
     `RULE-SET,EHentai,${PROXY_GROUPS.MANUAL}`,
     `RULE-SET,TikTok,${PROXY_GROUPS.MANUAL}`,
     `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`,
-    // 【修改】将 GoogleFCM 指向 Gemini 组
-    `RULE-SET,GoogleFCM,Gemini`,
-    // 【修改】添加 GEOSITE,GOOGLE-!CN 规则，捕获所有非中国 Google 服务
-    `GEOSITE,GOOGLE-!CN,Gemini`,
+    
+    // 【修复】将所有 CN Google 规则放在前面
     `GEOSITE,GOOGLE-PLAY@CN,${PROXY_GROUPS.DIRECT}`,
+    
+    // 【修复】使用正确的 geosite 语法，将所有非 CN Google 服务指向 Gemini 组
+    `GEOSITE,google@!cn,Gemini`,
+    
+    // 【修复】删除多余的 Google/Gemini 规则
+    
     "RULE-SET,OpenAI,OpenAI",
-    "RULE-SET,Gemini,Gemini",
-    "DOMAIN-SUFFIX,clients6.google.com,Gemini",
     "RULE-SET,Claude,Claude",
     "RULE-SET,GitHub,GitHub",
     "GEOSITE,TELEGRAM,Telegram",
@@ -581,13 +576,14 @@ function buildProxyGroups({
     return [
         {
             "name": PROXY_GROUPS.SELECT,
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png", 
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png",
             "type": "select",
             "proxies": defaultSelector
         },
         {
             "name": PROXY_GROUPS.MANUAL,
-            "icon": "https://cdn.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png", 
+            // 【修复】换回你指定的图标
+            "icon": "https://cdn.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png",
             "include-all": true,
             "type": "select"
         },
@@ -608,7 +604,7 @@ function buildProxyGroups({
         } : null,
         {
             "name": PROXY_GROUPS.FALLBACK,
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Round_Robin.png", // 替换图标
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Round_Robin.png",
             "type": "fallback",
             "url": "https://cp.cloudflare.com/generate_204",
             "proxies": defaultFallback,
@@ -618,7 +614,7 @@ function buildProxyGroups({
         },
         {
             "name": "静态资源",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Static.png", // 替换图标
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Static.png",
             "type": "select",
             "proxies": defaultProxies, // "静态资源" 仍使用 defaultProxies
         },
