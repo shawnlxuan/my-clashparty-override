@@ -174,6 +174,15 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Claude/Claude.yaml",
         "path": "./ruleset/Claude.yaml"
     },
+    // 【新增】GitHub 规则提供者
+    "GitHub": {
+        "type": "http",
+        "behavior": "domain",
+        "format": "yaml",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.yaml",
+        "path": "./ruleset/GitHub.yaml"
+    },
     "TruthSocial": {
         "type": "http",
         "behavior": "classical",
@@ -285,6 +294,8 @@ const baseRules = [
     "RULE-SET,OpenAI,OpenAI",
     "RULE-SET,Gemini,Gemini",
     "RULE-SET,Claude,Claude",
+    // 【新增】GitHub 规则
+    "RULE-SET,GitHub,GitHub",
     "GEOSITE,TELEGRAM,Telegram",
     "GEOSITE,YOUTUBE,YouTube",
     "GEOSITE,NETFLIX,Netflix",
@@ -624,6 +635,13 @@ function buildProxyGroups({
         {
             "name": "Claude",
             "icon": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/icons/chatgpt.png", // 使用相同图标
+            "type": "select",
+            "proxies": defaultProxies
+        },
+        // 【新增】GitHub 分组
+        {
+            "name": "GitHub",
+            "icon": "https://cdn.simpleicons.org/github",
             "type": "select",
             "proxies": defaultProxies
         },
