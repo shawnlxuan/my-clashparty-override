@@ -713,7 +713,7 @@ function buildProxyGroups({
         // 【修改】添加 Xbox 分组 (替换原 Steam 分组)
         {
             "name": "Xbox",
-            "icon": "https://cdn.simpleicons.org/xbox", 
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Xbox.png", 
             "type": "select",
             "proxies": subgroupProxies
         },
@@ -867,3 +867,4 @@ function main(config) {
 
     return resultConfig;
 }
+
