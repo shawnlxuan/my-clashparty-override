@@ -281,6 +281,15 @@ const ruleProviders = {
         "interval": 86400,
         "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.list",
         "path": "./ruleset/SteamCN.list"
+    },
+    // 【新增】Xbox 规则
+    "Xbox": {
+        "type": "http",
+        "behavior": "classical",
+        "format": "text",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Xbox/Xbox.list",
+        "path": "./ruleset/Xbox.list"
     }
 }
 
@@ -308,7 +317,10 @@ const baseRules = [
     `RULE-SET,Gemini,Gemini`,
     `RULE-SET,Claude,Claude`,
     `RULE-SET,GitHub,GitHub`,
-    `RULE-SET,Steam,Steam`,
+    // 【修改】Steam 规则指向 SELECT
+    `RULE-SET,Steam,${PROXY_GROUPS.SELECT}`,
+    // 【新增】Xbox 规则
+    `RULE-SET,Xbox,Xbox`,
     
     `GEOSITE,TELEGRAM,Telegram`,
     `GEOSITE,YOUTUBE,YouTube`,
@@ -698,10 +710,10 @@ function buildProxyGroups({
             "type": "select",
             "proxies": subgroupProxies 
         },
-        // 【修复】新建 Steam 分组
+        // 【修改】添加 Xbox 分组 (替换原 Steam 分组)
         {
-            "name": "Steam",
-            "icon": "https://cdn.simpleicons.org/steam", 
+            "name": "Xbox",
+            "icon": "https://cdn.simpleicons.org/xbox", 
             "type": "select",
             "proxies": subgroupProxies
         },
