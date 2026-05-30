@@ -12,11 +12,20 @@
 */
 
 const NODE_SUFFIX = "节点";
+const HEALTH_CHECK_URL = "https://cp.cloudflare.com/generate_204";
+const HEALTH_CHECK_INTERVAL = 300;
+const HEALTH_CHECK_EXPECTED_STATUS = 204;
+const LOW_COST_PATTERN = "0\\.[0-5]|低倍率|省流|大流量|实验性";
+const LANDING_PATTERN = "家宽|家庭|家庭宽带|商宽|商业宽带|星链|Starlink|落地";
+const PREFERRED_COUNTRY_ORDER = ["香港", "台湾", "日本", "美国", "新加坡"];
 
 function parseBool(value) {
     if (typeof value === "boolean") return value;
     if (typeof value === "string") {
         return value.toLowerCase() === "true" || value === "1";
+    }
+    if (typeof value === "number") {
+        return value === 1;
     }
     return false;
 }
@@ -360,7 +369,7 @@ function buildRules({ quicEnabled }) {
     const ruleList = [...baseRules];
     if (!quicEnabled) {
         // 屏蔽 QUIC 流量，避免网络环境 UDP 速度不佳时影响体验
-        ruleList.unshift("AND,(DST-PORT,443),(NETWORK,UDP),REJECT");
+        ruleList.unshift("AND,((DST-PORT,443),(NETWORK,UDP)),REJECT");
     }
     return ruleList;
 }
@@ -391,7 +400,7 @@ function buildDnsConfig({ mode, fakeIpFilter }) {
     const config = {
         "enable": true,
         "ipv6": ipv6Enabled,
-        "prefer-h3": true,
+        "prefer-h3": false,
         "enhanced-mode": mode,
         "default-nameserver": [
             "119.29.29.29",
@@ -404,7 +413,6 @@ function buildDnsConfig({ mode, fakeIpFilter }) {
             "180.184.1.1"
         ],
         "fallback": [
-            "quic://dns0.eu",
             "https://dns.cloudflare.com/dns-query",
             "https://dns.sb/dns-query",
             "tcp://208.67.222.222",
@@ -431,7 +439,7 @@ const dnsConfigFakeIp = buildDnsConfig({
         "geosite:connectivity-check",
         "geosite:cn",
         "Mijia Cloud",
-        "dig.io.mi.com",
+        "dlg.io.mi.com",
         "localhost.ptlogin2.qq.com",
         "*.icloud.com",
         "*.stun.*.*",
@@ -449,84 +457,72 @@ const geoxURL = {
 // 地区元数据
 const countriesMeta = {
     "香港": {
-        pattern: "(?i)香港|港|HK|hk|Hong Kong|HongKong|hongkong|🇭🇰",
+        pattern: "(?i)香港|港|(?:^|[^A-Za-z])HK(?:[^A-Za-z]|$)|Hong Kong|HongKong|hongkong|🇭🇰",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hong_Kong.png"
     },
     "澳门": {
-        pattern: "(?i)澳门|MO|Macau|🇲🇴",
+        pattern: "(?i)澳门|(?:^|[^A-Za-z])MO(?:[^A-Za-z]|$)|Macau|🇲🇴",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Macao.png"
     },
     "台湾": {
-        pattern: "(?i)台|新北|彰化|TW|Taiwan|🇹🇼",
+        pattern: "(?i)台|新北|彰化|(?:^|[^A-Za-z])TW(?:[^A-Za-z]|$)|Taiwan|🇹🇼",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Taiwan.png"
     },
     "新加坡": {
-        pattern: "(?i)新加坡|坡|狮城|SG|Singapore|🇸🇬",
+        pattern: "(?i)新加坡|坡|狮城|(?:^|[^A-Za-z])SG(?:[^A-Za-z]|$)|Singapore|🇸🇬",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Singapore.png"
     },
     "日本": {
-        pattern: "(?i)日本|川日|东京|大阪|泉日|埼玉|沪日|深日|JP|Japan|🇯🇵",
+        pattern: "(?i)日本|川日|东京|大阪|泉日|埼玉|沪日|深日|(?:^|[^A-Za-z])JP(?:[^A-Za-z]|$)|Japan|🇯🇵",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Japan.png"
     },
     "韩国": {
-        pattern: "(?i)KR|Korea|KOR|首尔|韩|韓|🇰🇷",
+        pattern: "(?i)(?:^|[^A-Za-z])KR(?:[^A-Za-z]|$)|Korea|(?:^|[^A-Za-z])KOR(?:[^A-Za-z]|$)|首尔|韩|韓|🇰🇷",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Korea.png"
     },
     "美国": {
-        pattern: "(?i)美国|美|US|United States|🇺🇸",
+        pattern: "(?i)美国|美|(?:^|[^A-Za-z])US(?:[^A-Za-z]|$)|United States|🇺🇸",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_States.png"
     },
     "加拿大": {
-        pattern: "(?i)加拿大|Canada|CA|🇨🇦",
+        pattern: "(?i)加拿大|Canada|(?:^|[^A-Za-z])CA(?:[^A-Za-z]|$)|🇨🇦",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Canada.png"
     },
     "英国": {
-        pattern: "(?i)英国|United Kingdom|UK|伦敦|London|🇬🇧",
+        pattern: "(?i)英国|United Kingdom|(?:^|[^A-Za-z])UK(?:[^A-Za-z]|$)|伦敦|London|🇬🇧",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_Kingdom.png"
     },
     "澳大利亚": {
-        pattern: "(?i)澳洲|澳大利亚|AU|Australia|🇦🇺",
+        pattern: "(?i)澳洲|澳大利亚|(?:^|[^A-Za-z])AU(?:[^A-Za-z]|$)|Australia|🇦🇺",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Australia.png"
     },
     "德国": {
-        pattern: "(?i)德国|德|DE|Germany|🇩🇪",
+        pattern: "(?i)德国|德|(?:^|[^A-Za-z])DE(?:[^A-Za-z]|$)|Germany|🇩🇪",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Germany.png"
     },
     "法国": {
-        pattern: "(?i)法国|法|FR|France|🇫🇷",
+        pattern: "(?i)法国|法|(?:^|[^A-Za-z])FR(?:[^A-Za-z]|$)|France|🇫🇷",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/France.png"
     },
     "俄罗斯": {
-        pattern: "(?i)俄罗斯|俄|RU|Russia|🇷🇺",
+        pattern: "(?i)俄罗斯|俄|(?:^|[^A-Za-z])RU(?:[^A-Za-z]|$)|Russia|🇷🇺",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Russia.png"
     },
     "泰国": {
-        pattern: "(?i)泰国|泰|TH|Thailand|🇹🇭",
+        pattern: "(?i)泰国|泰|(?:^|[^A-Za-z])TH(?:[^A-Za-z]|$)|Thailand|🇹🇭",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Thailand.png"
     },
     "印度": {
-        pattern: "(?i)印度|IN|India|🇮🇳",
+        pattern: "(?i)印度|(?:^|[^A-Za-z])IN(?:[^A-Za-z]|$)|India|🇮🇳",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/India.png"
     },
     "马来西亚": {
-        pattern: "(?i)马来西亚|马来|MY|Malaysia|🇲🇾",
+        pattern: "(?i)马来西亚|马来|(?:^|[^A-Za-z])MY(?:[^A-Za-z]|$)|Malaysia|🇲🇾",
         icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Malaysia.png"
     },
 };
 
-function hasLowCost(config) {
-    const lowCostRegex = /0\.[0-5]|低倍率|省流|大流量|实验性/i;
-    return (config.proxies || []).some(proxy => lowCostRegex.test(proxy.name));
-}
-
-function parseCountries(config) {
-    const proxies = config.proxies || [];
-    const ispRegex = /家宽|家庭|家庭宽带|商宽|商业宽带|星链|Starlink|落地/i;   // 需要排除的关键字
-
-    // 用来累计各国节点数
-    const countryCounts = Object.create(null);
-
-    // 构建地区正则表达式，去掉 (?i) 前缀
+function buildCountryRegexMap() {
     const compiledRegex = {};
     for (const [country, meta] of Object.entries(countriesMeta)) {
         compiledRegex[country] = new RegExp(
@@ -534,37 +530,51 @@ function parseCountries(config) {
             'i'
         );
     }
+    return compiledRegex;
+}
 
-    // 逐个节点进行匹配与统计
+function scanProxies(config, { landing }) {
+    const proxies = config.proxies || [];
+    const landingRegex = new RegExp(LANDING_PATTERN, 'i');
+    const lowCostRegex = new RegExp(LOW_COST_PATTERN, 'i');
+    const compiledRegex = buildCountryRegexMap();
+    const countryCounts = Object.create(null);
+    const proxyInfo = [];
+    let lowCost = false;
+
     for (const proxy of proxies) {
-        const name = proxy.name || '';
+        const name = (proxy && typeof proxy.name === "string") ? proxy.name : "";
+        const isLowCost = lowCostRegex.test(name);
+        const isLanding = landingRegex.test(name);
+        let matchedCountry = null;
 
-        // 过滤掉不想统计的 ISP 节点
-        if (ispRegex.test(name)) continue;
+        if (isLowCost) {
+            lowCost = true;
+        }
 
-        // 找到第一个匹配到的地区就计数并终止本轮
         for (const [country, regex] of Object.entries(compiledRegex)) {
             if (regex.test(name)) {
-                countryCounts[country] = (countryCounts[country] || 0) + 1;
-                break;    // 避免一个节点同时累计到多个地区
+                matchedCountry = country;
+                break;
             }
         }
+
+        if (matchedCountry && !isLowCost && (!landing || !isLanding)) {
+            countryCounts[matchedCountry] = (countryCounts[matchedCountry] || 0) + 1;
+        }
+
+        proxyInfo.push({ name, country: matchedCountry, isLowCost, isLanding });
     }
 
-    // 将结果对象转成数组形式
-    const result = [];
-    for (const [country, count] of Object.entries(countryCounts)) {
-        result.push({ country, count });
-    }
-
-    return result;   // [{ country: 'Japan', count: 12 }, ...]
+    const countryInfo = Object.entries(countryCounts).map(([country, count]) => ({ country, count }));
+    return { countryInfo, compiledRegex, proxyInfo, lowCost };
 }
 
 
 function buildCountryProxyGroups({ countries, landing, loadBalance }) {
     const groups = [];
-    const baseExcludeFilter = "0\\.[0-5]|低倍率|省流|大流量|实验性";
-    const landingExcludeFilter = "(?i)家宽|家庭|家庭宽带|商宽|商业宽带|星链|Starlink|落地";
+    const baseExcludeFilter = LOW_COST_PATTERN;
+    const landingExcludeFilter = `(?i)${LANDING_PATTERN}`;
     const groupType = loadBalance ? "load-balance" : "url-test";
 
     for (const country of countries) {
@@ -580,12 +590,18 @@ function buildCountryProxyGroups({ countries, landing, loadBalance }) {
             "type": groupType
         };
 
-        if (!loadBalance) {
+        Object.assign(groupConfig, {
+            "url": HEALTH_CHECK_URL,
+            "interval": HEALTH_CHECK_INTERVAL,
+            "expected-status": HEALTH_CHECK_EXPECTED_STATUS,
+            "lazy": true
+        });
+
+        if (loadBalance) {
+            groupConfig["strategy"] = "consistent-hashing";
+        } else {
             Object.assign(groupConfig, {
-                "url": "https://cp.cloudflare.com/generate_204",
-                "interval": 60,
-                "tolerance": 20,
-                "lazy": false
+                "tolerance": 20
             });
         }
 
@@ -610,10 +626,6 @@ function buildProxyGroups({
     // 查看是否有特定地区的节点
     const hasTW = countries.includes("台湾");
     const hasHK = countries.includes("香港");
-    
-    const frontProxySelector = landing
-        ? defaultSelector.filter(name => name !== PROXY_GROUPS.LANDING && name !== PROXY_GROUPS.FALLBACK)
-        : [];
 
     return [
         {
@@ -630,29 +642,22 @@ function buildProxyGroups({
             "proxies": sortedManualProxies
         },
         (landing) ? {
-            "name": "前置代理",
-            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Area.png",
-            "type": "select",
-            "include-all": true,
-            "exclude-filter": "(?i)家宽|家庭|家庭宽带|商宽|商业宽带|星链|Starlink|落地",
-            "proxies": frontProxySelector
-        } : null,
-        (landing) ? {
             "name": PROXY_GROUPS.LANDING,
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Airport.png",
             "type": "select",
             "include-all": true,
-            "filter": "(?i)家宽|家庭|家庭宽带|商宽|商业宽带|星链|Starlink|落地",
+            "filter": `(?i)${LANDING_PATTERN}`,
         } : null,
         {
             "name": PROXY_GROUPS.FALLBACK,
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Round_Robin.png",
             "type": "fallback",
-            "url": "https://cp.cloudflare.com/generate_204",
+            "url": HEALTH_CHECK_URL,
             "proxies": defaultFallback,
-            "interval": 180,
+            "interval": HEALTH_CHECK_INTERVAL,
+            "expected-status": HEALTH_CHECK_EXPECTED_STATUS,
             "tolerance": 20,
-            "lazy": false
+            "lazy": true
         },
         {
             "name": "静态资源",
@@ -744,9 +749,13 @@ function buildProxyGroups({
             "name": PROXY_GROUPS.LOW_COST,
             "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Lab.png",
             "type": "url-test",
-            "url": "https://cp.cloudflare.com/generate_204",
+            "url": HEALTH_CHECK_URL,
+            "interval": HEALTH_CHECK_INTERVAL,
+            "expected-status": HEALTH_CHECK_EXPECTED_STATUS,
+            "tolerance": 20,
+            "lazy": true,
             "include-all": true,
-            "filter": "(?i)0\.[0-5]|低倍率|省流|大流量|实验性"
+            "filter": `(?i)${LOW_COST_PATTERN}`
         } : null,
         ...countryProxyGroups
     ].filter(Boolean); // 过滤掉 null 值
@@ -754,48 +763,30 @@ function buildProxyGroups({
 
 function main(config) {
     const resultConfig = { proxies: config.proxies };
-    // 解析地区与低倍率信息
-    const countryInfo = parseCountries(resultConfig); // [{ country, count }]
-    const lowCost = hasLowCost(resultConfig);
+    const { countryInfo, proxyInfo, lowCost } = scanProxies(resultConfig, { landing });
     const countryGroupNames = getCountryGroupNames(countryInfo, countryThreshold);
     const countries = stripNodeSuffix(countryGroupNames);
 
-    // 【新逻辑】为 "手动选择" 分组创建排序后的节点列表
-    const allProxyNames = (config.proxies || []).map(p => p.name);
-    const preferredOrder = ["香港", "台湾", "日本", "美国", "新加坡"];
-    const compiledRegex = {};
-    for (const [country, meta] of Object.entries(countriesMeta)) {
-        compiledRegex[country] = new RegExp(
-            meta.pattern.replace(/^\(\?i\)/, ''),
-            'i'
-        );
-    }
-    
-    function getSortKey(proxyName) {
-        for (let i = 0; i < preferredOrder.length; i++) {
-            const country = preferredOrder[i];
-            if (compiledRegex[country] && compiledRegex[country].test(proxyName)) {
-                return i; // 0 for HK, 1 for TW, etc.
-            }
-        }
-        // 检查是否属于任何一个 "其他" 国家分组
-        for (const country of countries) { // 'countries' 在 main 函数作用域内
-            if (compiledRegex[country] && compiledRegex[country].test(proxyName)) {
-                 return preferredOrder.length; // 5 for other known countries
-            }
-        }
-        return preferredOrder.length + 1; // 6 for nodes that don't match any country (e.g., info nodes)
+    const countrySet = new Set(countries);
+
+    function getSortKey(proxyMeta) {
+        if (!proxyMeta.country) return PREFERRED_COUNTRY_ORDER.length + 1;
+
+        const preferredIndex = PREFERRED_COUNTRY_ORDER.indexOf(proxyMeta.country);
+        if (preferredIndex !== -1) return preferredIndex;
+        if (countrySet.has(proxyMeta.country)) return PREFERRED_COUNTRY_ORDER.length;
+
+        return PREFERRED_COUNTRY_ORDER.length + 1;
     }
 
-    const sortedManualProxies = allProxyNames.sort((a, b) => {
+    const sortedManualProxies = [...proxyInfo].sort((a, b) => {
         const keyA = getSortKey(a);
         const keyB = getSortKey(b);
         if (keyA !== keyB) {
-            return keyA - keyB; // Sort by region key
+            return keyA - keyB;
         }
-        return a.localeCompare(b); // Alphabetical within region
-    });
-    // 【新逻辑结束】
+        return a.name.localeCompare(b.name);
+    }).map(item => item.name).filter(Boolean);
 
     // 构建基础数组
     const {
