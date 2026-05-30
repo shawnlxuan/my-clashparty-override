@@ -15,7 +15,7 @@ const NODE_SUFFIX = "节点";
 const HEALTH_CHECK_URL = "https://cp.cloudflare.com/generate_204";
 const HEALTH_CHECK_INTERVAL = 300;
 const HEALTH_CHECK_EXPECTED_STATUS = 204;
-const LOW_COST_PATTERN = "0\\.[0-5]|低倍率|省流|大流量|实验性";
+const LOW_COST_PATTERN = "(?:^|[^0-9.])0\\.[0-5](?:[^0-9.]|$)|低倍率|省流|大流量|实验性";
 const LANDING_PATTERN = "家宽|家庭|家庭宽带|商宽|商业宽带|星链|Starlink|落地";
 const PREFERRED_COUNTRY_ORDER = ["香港", "台湾", "日本", "美国", "新加坡"];
 
@@ -43,7 +43,7 @@ function parseNumber(value, defaultValue = 0) {
  * @param {object} args - 传入的原始参数对象，如 $arguments。
  * @returns {object} - 包含所有功能开关状态的对象。
  */
-function buildFeatureFlags(args) {
+function buildFeatureFlags(args = {}) {
     const spec = {
         loadbalance: "loadBalance",
         landing: "landing",
@@ -60,7 +60,7 @@ function buildFeatureFlags(args) {
     }, {});
 
     // 单独处理数字参数
-    flags.countryThreshold = parseNumber(args.threshold, 0);
+    flags.countryThreshold = Math.max(0, parseNumber(args.threshold, 0));
 
     return flags;
 }
@@ -84,8 +84,7 @@ function getCountryGroupNames(countryInfo, minCount) {
 }
 
 function stripNodeSuffix(groupNames) {
-    const suffixPattern = new RegExp(`${NODE_SUFFIX}$`);
-    return groupNames.map(name => name.replace(suffixPattern, ""));
+    return groupNames.map(name => name.endsWith(NODE_SUFFIX) ? name.slice(0, -NODE_SUFFIX.length) : name);
 }
 
 const PROXY_GROUPS = {
@@ -533,14 +532,19 @@ function buildCountryRegexMap() {
     return compiledRegex;
 }
 
+const COUNTRY_REGEX_ENTRIES = Object.entries(buildCountryRegexMap());
+const PREFERRED_COUNTRY_INDEX = new Map(
+    PREFERRED_COUNTRY_ORDER.map((country, index) => [country, index])
+);
+
 function scanProxies(config, { landing }) {
     const proxies = config.proxies || [];
     const landingRegex = new RegExp(LANDING_PATTERN, 'i');
     const lowCostRegex = new RegExp(LOW_COST_PATTERN, 'i');
-    const compiledRegex = buildCountryRegexMap();
     const countryCounts = Object.create(null);
     const proxyInfo = [];
     let lowCost = false;
+    let hasLanding = false;
 
     for (const proxy of proxies) {
         const name = (proxy && typeof proxy.name === "string") ? proxy.name : "";
@@ -551,8 +555,11 @@ function scanProxies(config, { landing }) {
         if (isLowCost) {
             lowCost = true;
         }
+        if (isLanding) {
+            hasLanding = true;
+        }
 
-        for (const [country, regex] of Object.entries(compiledRegex)) {
+        for (const [country, regex] of COUNTRY_REGEX_ENTRIES) {
             if (regex.test(name)) {
                 matchedCountry = country;
                 break;
@@ -567,7 +574,7 @@ function scanProxies(config, { landing }) {
     }
 
     const countryInfo = Object.entries(countryCounts).map(([country, count]) => ({ country, count }));
-    return { countryInfo, compiledRegex, proxyInfo, lowCost };
+    return { countryInfo, proxyInfo, lowCost, hasLanding };
 }
 
 
@@ -621,6 +628,7 @@ function buildProxyGroups({
     defaultProxiesDirect,
     defaultSelector,
     defaultFallback,
+    manualIncludeAll,
     sortedManualProxies // 【修改】接收排序后的节点列表
 }) {
     // 查看是否有特定地区的节点
@@ -638,6 +646,7 @@ function buildProxyGroups({
             "name": PROXY_GROUPS.MANUAL,
             "icon": "https://cdn.jsdelivr.net/gh/shindgewongxj/WHATSINStash@master/icon/select.png", // 恢复图标
             "type": "select",
+            ...(manualIncludeAll ? { "include-all": true } : {}),
             // 【修改】使用排序后的零散节点列表，并移除 "include-all"
             "proxies": sortedManualProxies
         },
@@ -761,9 +770,11 @@ function buildProxyGroups({
     ].filter(Boolean); // 过滤掉 null 值
 }
 
-function main(config) {
-    const resultConfig = { proxies: config.proxies };
-    const { countryInfo, proxyInfo, lowCost } = scanProxies(resultConfig, { landing });
+function main(config = {}) {
+    const resultConfig = { ...config, proxies: config.proxies || [] };
+    const { countryInfo, proxyInfo, lowCost, hasLanding } = scanProxies(resultConfig, { landing });
+    const landingEnabled = landing && hasLanding;
+    const hasProxyProviders = !!(resultConfig["proxy-providers"] && Object.keys(resultConfig["proxy-providers"]).length);
     const countryGroupNames = getCountryGroupNames(countryInfo, countryThreshold);
     const countries = stripNodeSuffix(countryGroupNames);
 
@@ -772,8 +783,9 @@ function main(config) {
     function getSortKey(proxyMeta) {
         if (!proxyMeta.country) return PREFERRED_COUNTRY_ORDER.length + 1;
 
-        const preferredIndex = PREFERRED_COUNTRY_ORDER.indexOf(proxyMeta.country);
-        if (preferredIndex !== -1) return preferredIndex;
+        if (PREFERRED_COUNTRY_INDEX.has(proxyMeta.country)) {
+            return PREFERRED_COUNTRY_INDEX.get(proxyMeta.country);
+        }
         if (countrySet.has(proxyMeta.country)) return PREFERRED_COUNTRY_ORDER.length;
 
         return PREFERRED_COUNTRY_ORDER.length + 1;
@@ -794,14 +806,14 @@ function main(config) {
         defaultFallback,
         subgroupProxies, 
         defaultProxiesDirect
-    } = buildBaseLists({ landing, lowCost, countryGroupNames });
+    } = buildBaseLists({ landing: landingEnabled, lowCost, countryGroupNames });
 
     // 为地区构建对应的 url-test / load-balance 组
-    const countryProxyGroups = buildCountryProxyGroups({ countries, landing, loadBalance });
+    const countryProxyGroups = buildCountryProxyGroups({ countries, landing: landingEnabled, loadBalance });
 
     // 生成代理组
     const proxyGroups = buildProxyGroups({
-        landing,
+        landing: landingEnabled,
         countries,
         countryProxyGroups,
         lowCost,
@@ -809,6 +821,7 @@ function main(config) {
         defaultProxiesDirect,
         defaultSelector,
         defaultFallback,
+        manualIncludeAll: hasProxyProviders && sortedManualProxies.length === 0,
         sortedManualProxies // 【修改】传入排序后的节点列表
     });
     
