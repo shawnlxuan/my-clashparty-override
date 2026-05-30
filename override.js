@@ -94,6 +94,7 @@ const PROXY_GROUPS = {
     DIRECT: "直连",
     LANDING: "落地节点",
     LOW_COST: "低倍率节点",
+    FINAL: "Final",
 };
 
 // 辅助函数，用于根据条件构建数组，自动过滤掉无效值（如 false, null）
@@ -149,8 +150,8 @@ const ruleProviders = {
         "type": "http",
         "behavior": "domain",
         "format": "mrs",
-        "interval": 86400,
-        "url": "https://adrules.top/adrules-mihomo.mrs",
+        "interval": 28800,
+        "url": "https://cdn.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblockmihomolite.mrs",
         "path": "./ruleset/ADBlock.mrs"
     },
     "TruthSocial": {
@@ -160,14 +161,6 @@ const ruleProviders = {
         "interval": 86400,
         "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/TruthSocial.list",
         "path": "./ruleset/TruthSocial.list"
-    },
-    "SogouInput": {
-        "type": "http",
-        "behavior": "classical",
-        "format": "text",
-        "interval": 86400,
-        "url": "https://ruleset.skk.moe/Clash/non_ip/sogouinput.txt",
-        "path": "./ruleset/SogouInput.txt"
     },
     "StaticResources": {
         "type": "http",
@@ -241,6 +234,14 @@ const ruleProviders = {
         "url": "https://cdn.jsdelivr.net/gh/powerfullz/override-rules@master/ruleset/Crypto.list",
         "path": "./ruleset/Crypto.list"
     },
+    "GFWList": {
+        "type": "http",
+        "behavior": "domain",
+        "format": "text",
+        "interval": 86400,
+        "url": "https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/gfw.txt",
+        "path": "./ruleset/GFWList.txt"
+    },
     // 【修复】添加所有 .list 规则
     "OpenAI": {
         "type": "http",
@@ -306,15 +307,14 @@ const baseRules = [
     // --- 1. 广告和隐私规则 (最高优先级) ---
     `RULE-SET,ADBlock,广告拦截`,
     `RULE-SET,AdditionalFilter,广告拦截`,
-    `RULE-SET,SogouInput,${PROXY_GROUPS.DIRECT}`, // (修改)
 
     // --- 2. 高优先级直连规则 (CN/Private/SteamFix) ---
     `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT}`, // 【修复】使用 .list 规则
     `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留) 原始 SteamFix
     `GEOSITE,PRIVATE,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,CN,${PROXY_GROUPS.DIRECT}`,
-    `GEOIP,PRIVATE,${PROXY_GROUPS.DIRECT}`,
-    `GEOIP,CN,${PROXY_GROUPS.DIRECT}`,
+    `GEOIP,PRIVATE,${PROXY_GROUPS.DIRECT},no-resolve`,
+    `GEOIP,CN,${PROXY_GROUPS.DIRECT},no-resolve`,
     `GEOSITE,GOOGLE-PLAY@CN,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,MICROSOFT@CN,${PROXY_GROUPS.DIRECT}`,
     `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
@@ -333,14 +333,15 @@ const baseRules = [
     `GEOSITE,TELEGRAM,Telegram`,
     `GEOSITE,YOUTUBE,YouTube`,
     `GEOSITE,NETFLIX,Netflix`,
-    `GEOIP,NETFLIX,Netflix`,
-    `GEOIP,TELEGRAM,Telegram`,
+    `GEOIP,NETFLIX,Netflix,no-resolve`,
+    `GEOIP,TELEGRAM,Telegram,no-resolve`,
     `GEOSITE,BILIBILI,Bilibili`,
     "DST-PORT,22,SSH(22端口)",
 
     // --- 4. Google (Fallback) ---
     // (如果 Gemini.list 不全，GEOSITE,google 会捕获剩余的 google 流量)
     `GEOSITE,google,Gemini`, 
+    `GEOIP,GOOGLE,Gemini,no-resolve`,
     
     // --- 5. 被删除的分组 (指向手动) ---
     `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL}`, // (修改)
@@ -357,10 +358,10 @@ const baseRules = [
     `RULE-SET,AdditionalCDNResources,静态资源`,
 
     // --- 7. GFW 规则 ---
-    `GEOSITE,GFW,${PROXY_GROUPS.SELECT}`,
+    `RULE-SET,GFWList,${PROXY_GROUPS.SELECT}`,
 
     // --- 8. 最终回退规则 ---
-    `MATCH,${PROXY_GROUPS.SELECT}`
+    `MATCH,${PROXY_GROUPS.FINAL}`
 ];
 
 
@@ -436,7 +437,6 @@ const dnsConfigFakeIp = buildDnsConfig({
     fakeIpFilter: [
         "geosite:private",
         "geosite:connectivity-check",
-        "geosite:cn",
         "Mijia Cloud",
         "dlg.io.mi.com",
         "localhost.ptlogin2.qq.com",
@@ -743,6 +743,14 @@ function buildProxyGroups({
             "type": "select",
             "proxies": [
                 "DIRECT", PROXY_GROUPS.SELECT
+            ]
+        },
+        {
+            "name": PROXY_GROUPS.FINAL,
+            "icon": "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Final.png",
+            "type": "select",
+            "proxies": [
+                PROXY_GROUPS.SELECT, "DIRECT"
             ]
         },
         {
