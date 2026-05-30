@@ -118,8 +118,7 @@ function buildBaseLists({ landing, lowCost, countryGroupNames }) {
         landing && PROXY_GROUPS.LANDING,
         countryGroupNames,
         lowCost && PROXY_GROUPS.LOW_COST,
-        PROXY_GROUPS.MANUAL,
-        "DIRECT"
+        PROXY_GROUPS.MANUAL
     );
     
     // 【修复】为所有子分组 (AI, 媒体, 静态资源) 创建一个不含 "选择代理" 的列表
