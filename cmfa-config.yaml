@@ -1,0 +1,367 @@
+# CMFA / Mihomo 双订阅融合配置
+#
+# 分流与 Clash Verge 扩展脚本 (extension.js) 对齐：
+# - AI 专用订阅：海外 AI（ChatGPT / Claude / Gemini 等）
+# - 通用订阅：其余海外流量、微软 / Copilot / 国际 Bing
+# - 国内 Bing、局域网、大陆站点：直连
+# - 常见广告：拒绝
+#
+# Android 保留两项手机端特例（脚本里没有）：
+# - Grok 走通用，避免和 Google 登录出口不一致
+# - Google Play 下载链路走通用
+#
+# ChatGPT App「SSL 配置错误」说明见文件末尾注释。
+#
+# 使用前替换两个订阅 url。
+
+mode: rule
+log-level: warning
+ipv6: false
+allow-lan: false
+unified-delay: true
+tcp-concurrent: true
+find-process-mode: always
+
+geo-auto-update: true
+geo-update-interval: 24
+
+geox-url:
+  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+  mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
+  asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
+
+profile:
+  store-selected: true
+
+dns:
+  enable: true
+  ipv6: false
+  respect-rules: false
+  prefer-h3: false
+  use-hosts: true
+  use-system-hosts: true
+  cache-algorithm: arc
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+    - "*.arpa"
+    - www.gstatic.com
+    - +.gstatic.com
+    - cp.cloudflare.com
+    - captive.apple.com
+    # ChatGPT App 做证书钉扎，连 198.18.x.x 会报 SSL 配置错误。
+    - +.openai.com
+    - +.chatgpt.com
+    - +.oaistatic.com
+    - +.oaiusercontent.com
+    - +.chat.com
+    - +.sora.com
+    - +.anthropic.com
+    - +.claude.ai
+    - +.claudeusercontent.com
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 1.1.1.1
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+    - https://1.1.1.1/dns-query
+  proxy-server-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 1.1.1.1
+  direct-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+
+# 只嗅探、不改写目标地址。override-destination: true 会让 ChatGPT App
+# 钉扎的证书和实际 TCP 目标对不上，表现为 SSL 配置错误。
+# 不嗅探 QUIC，避免干扰 App 的 HTTP/3。
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: false
+  skip-domain:
+    - Mijia Cloud
+    - +.push.apple.com
+    - +.openai.com
+    - +.chatgpt.com
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: false
+    TLS:
+      ports: [443, 8443]
+      override-destination: false
+
+proxy-providers:
+  AI专用订阅:
+    type: http
+    url: "https://example.com/replace-with-your-ai-subscription"
+    path: ./providers/ai.yaml
+    interval: 21600
+    proxy: DIRECT
+    header:
+      User-Agent:
+        - clash-verge/v2.5.1
+    override:
+      additional-prefix: "[AI] "
+      ip-version: ipv4-prefer
+    health-check:
+      enable: true
+      url: "http://www.gstatic.com/generate_204"
+      interval: 1800
+      timeout: 10000
+      lazy: true
+      expected-status: 204
+
+  通用订阅:
+    type: http
+    url: "https://example.com/replace-with-your-general-subscription"
+    path: ./providers/general.yaml
+    interval: 21600
+    proxy: DIRECT
+    override:
+      additional-prefix: "[通用] "
+    health-check:
+      enable: true
+      url: "http://www.gstatic.com/generate_204"
+      interval: 1800
+      timeout: 10000
+      lazy: true
+      expected-status: 204
+
+proxy-groups:
+  - name: "🤖 AI代理"
+    type: select
+    url: "http://www.gstatic.com/generate_204"
+    empty-fallback: REJECT
+    use:
+      - AI专用订阅
+
+  - name: "🚀 通用代理"
+    type: select
+    proxies:
+      - "♻️ 通用自动"
+    use:
+      - 通用订阅
+
+  - name: "♻️ 通用自动"
+    type: url-test
+    empty-fallback: REJECT
+    use:
+      - 通用订阅
+    url: "http://www.gstatic.com/generate_204"
+    interval: 300
+    tolerance: 80
+    timeout: 8000
+    lazy: true
+
+  - name: "📋 节点总览（仅查看）"
+    type: select
+    use:
+      - AI专用订阅
+      - 通用订阅
+
+rule-providers:
+  BM7-OpenAI:
+    type: http
+    behavior: classical
+    format: yaml
+    url: "https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.yaml"
+    path: ./rules/blackmatrix7_openai.yaml
+    interval: 86400
+  BM7-Anthropic:
+    type: http
+    behavior: classical
+    format: yaml
+    url: "https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Anthropic/Anthropic.yaml"
+    path: ./rules/blackmatrix7_anthropic.yaml
+    interval: 86400
+  BM7-Claude:
+    type: http
+    behavior: classical
+    format: yaml
+    url: "https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Claude/Claude.yaml"
+    path: ./rules/blackmatrix7_claude.yaml
+    interval: 86400
+  BM7-BardAI:
+    type: http
+    behavior: classical
+    format: yaml
+    url: "https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/BardAI/BardAI.yaml"
+    path: ./rules/blackmatrix7_bard_ai.yaml
+    interval: 86400
+  BM7-Gemini:
+    type: http
+    behavior: classical
+    format: yaml
+    url: "https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Gemini/Gemini.yaml"
+    path: ./rules/blackmatrix7_gemini.yaml
+    interval: 86400
+  BM7-Copilot:
+    type: http
+    behavior: classical
+    format: yaml
+    url: "https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Copilot/Copilot.yaml"
+    path: ./rules/blackmatrix7_copilot.yaml
+    interval: 86400
+  BM7-Civitai:
+    type: http
+    behavior: classical
+    format: yaml
+    url: "https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Civitai/Civitai.yaml"
+    path: ./rules/blackmatrix7_civitai.yaml
+    interval: 86400
+  BM7-Microsoft:
+    type: http
+    behavior: classical
+    format: yaml
+    url: "https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft.yaml"
+    path: ./rules/blackmatrix7_microsoft.yaml
+    interval: 86400
+
+rules:
+  # 测速 URL：不能 DIRECT，也不能被广告规则拦截。
+  - DOMAIN,www.gstatic.com,🤖 AI代理
+  - DOMAIN-SUFFIX,gstatic.com,🤖 AI代理
+  - DOMAIN,cp.cloudflare.com,🤖 AI代理
+  - DOMAIN,captive.apple.com,🤖 AI代理
+
+  # CMFA 内核连节点直连，避免 TUN 把握手再送进分流。
+  - PROCESS-NAME,com.github.metacubex.clash.meta,DIRECT
+  - PROCESS-NAME,ClashMetaForAndroid,DIRECT
+
+  # DNS 查询不能落入 MATCH → 通用代理。
+  - IP-CIDR,223.5.5.5/32,DIRECT,no-resolve
+  - IP-CIDR,223.6.6.6/32,DIRECT,no-resolve
+  - IP-CIDR,119.29.29.29/32,DIRECT,no-resolve
+  - IP-CIDR,1.1.1.1/32,DIRECT,no-resolve
+  - IP-CIDR,1.0.0.1/32,DIRECT,no-resolve
+  - DOMAIN,dns.alidns.com,DIRECT
+  - DOMAIN,doh.pub,DIRECT
+
+  - GEOSITE,private,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+  - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR6,::1/128,DIRECT,no-resolve
+  - IP-CIDR6,fc00::/7,DIRECT,no-resolve
+  - IP-CIDR6,fe80::/10,DIRECT,no-resolve
+
+  - GEOSITE,category-ads-all,REJECT
+
+  # Bing 国内版直连，必须在 Copilot / Microsoft 之前。
+  - DOMAIN,cn.bing.com,DIRECT
+  - DOMAIN-SUFFIX,cn.bing.com,DIRECT
+  - DOMAIN-SUFFIX,bing.com.cn,DIRECT
+
+  # 微软 / Copilot / 国际 Bing 走通用，必须在 BM7-Copilot 和 category-ai 之前。
+  - DOMAIN,www.bing.com,🚀 通用代理
+  - DOMAIN,bing.com,🚀 通用代理
+  - DOMAIN,r.bing.com,🚀 通用代理
+  - DOMAIN,sydney.bing.com,🚀 通用代理
+  - DOMAIN,services.bingapis.com,🚀 通用代理
+  - DOMAIN-SUFFIX,edgeservices.bing.com,🚀 通用代理
+  - DOMAIN-SUFFIX,copilot.microsoft.com,🚀 通用代理
+  - DOMAIN-SUFFIX,copilot.cloud.microsoft,🚀 通用代理
+  - DOMAIN-SUFFIX,githubcopilot.com,🚀 通用代理
+  - DOMAIN,copilot-proxy.githubusercontent.com,🚀 通用代理
+  - DOMAIN,copilot-workspace.githubnext.com,🚀 通用代理
+  - DOMAIN,gateway.bingviz.microsoft.net,🚀 通用代理
+  - DOMAIN,gateway.bingviz.microsoftapp.net,🚀 通用代理
+
+  # Grok Android 用 Google Credential Manager 登录，出口必须和 Google 一致。
+  - DOMAIN-SUFFIX,x.ai,🚀 通用代理
+  - DOMAIN-SUFFIX,grok.com,🚀 通用代理
+
+  - RULE-SET,BM7-OpenAI,🤖 AI代理
+  - RULE-SET,BM7-Anthropic,🤖 AI代理
+  - RULE-SET,BM7-Claude,🤖 AI代理
+  - RULE-SET,BM7-BardAI,🤖 AI代理
+  - RULE-SET,BM7-Gemini,🤖 AI代理
+  - RULE-SET,BM7-Copilot,🤖 AI代理
+  - RULE-SET,BM7-Civitai,🤖 AI代理
+
+  - GEOSITE,category-ai-!cn,🤖 AI代理
+
+  - DOMAIN-SUFFIX,chat.com,🤖 AI代理
+  - DOMAIN-SUFFIX,sora.com,🤖 AI代理
+  - DOMAIN-SUFFIX,claudeusercontent.com,🤖 AI代理
+  - DOMAIN,aistudio.google.com,🤖 AI代理
+  - DOMAIN,notebooklm.google.com,🤖 AI代理
+  - DOMAIN-SUFFIX,perplexity.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,pplx.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,poe.com,🤖 AI代理
+  - DOMAIN-SUFFIX,mistral.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,groq.com,🤖 AI代理
+  - DOMAIN-SUFFIX,huggingface.co,🤖 AI代理
+  - DOMAIN-SUFFIX,hf.co,🤖 AI代理
+  - DOMAIN-SUFFIX,cohere.com,🤖 AI代理
+  - DOMAIN-SUFFIX,together.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,replicate.com,🤖 AI代理
+  - DOMAIN-SUFFIX,openrouter.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,deepinfra.com,🤖 AI代理
+  - DOMAIN-SUFFIX,fireworks.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,fal.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,stability.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,midjourney.com,🤖 AI代理
+  - DOMAIN-SUFFIX,runwayml.com,🤖 AI代理
+  - DOMAIN-SUFFIX,leonardo.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,ideogram.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,elevenlabs.io,🤖 AI代理
+  - DOMAIN-SUFFIX,suno.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,udio.com,🤖 AI代理
+  - DOMAIN-SUFFIX,lumalabs.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,character.ai,🤖 AI代理
+  - DOMAIN-SUFFIX,phind.com,🤖 AI代理
+  - DOMAIN-SUFFIX,cursor.com,🤖 AI代理
+  - DOMAIN-SUFFIX,cursor.sh,🤖 AI代理
+  - DOMAIN-SUFFIX,windsurf.com,🤖 AI代理
+  - DOMAIN-SUFFIX,codeium.com,🤖 AI代理
+  - DOMAIN-SUFFIX,v0.dev,🤖 AI代理
+  - DOMAIN-SUFFIX,bolt.new,🤖 AI代理
+  - DOMAIN-SUFFIX,lovable.dev,🤖 AI代理
+  - DOMAIN-SUFFIX,manus.im,🤖 AI代理
+  - DOMAIN-SUFFIX,genspark.ai,🤖 AI代理
+
+  # Google Play：必须在 GEOSITE,cn 之前。
+  - DOMAIN,services.googleapis.cn,🚀 通用代理
+  - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,🚀 通用代理
+
+  - RULE-SET,BM7-Microsoft,🚀 通用代理
+
+  - GEOSITE,cn,DIRECT
+  - GEOIP,CN,DIRECT,no-resolve
+
+  - MATCH,🚀 通用代理
+
+# ---------------------------------------------------------------------------
+# ChatGPT App「SSL 配置错误」结论（不是 OpenAI 单独发明的奇怪协议）
+#
+# 1) App 侧：官方客户端有证书钉扎。它要求连到 chatgpt.com 时，证书链、
+#    SNI、目标地址一致。任何「先连假 IP / 再改写目标」都会被它报成 SSL 错误。
+#    浏览器通常不钉扎，所以同一份配置下网页能开、App 报 SSL。
+#
+# 2) 内核侧：Mihomo 默认 sniffer.override-destination=true。嗅探到 SNI 后
+#    会丢掉原来的目标 IP，再走一遍 DNS。和 fake-ip 叠在一起时，ChatGPT
+#    实际连的是 198.18.x.x，钉扎失败。这是配置踩中内核默认行为，不是内核
+#    随机损坏证书。
+#
+# 3) 本文件已做：OpenAI/ChatGPT 域名不进 fake-ip；嗅探只辅助分流、
+#    不 override-destination；不嗅探 QUIC；prefer-h3=false。
+#
+# 4) 若仍报 SSL：先看连接日志。若是
+#    chatgpt.com → 🤖 AI代理 → panel.xxx:34883 i/o timeout
+#    那是节点端口被当前网络拦截，App 也会把握手失败显示成 SSL 错误。
+#    这和分流无关，需要机场提供 443 入口。
+# ---------------------------------------------------------------------------
+
