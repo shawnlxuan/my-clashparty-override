@@ -4,20 +4,23 @@
 # 圈 X 自定义分流（不含订阅地址）
 #
 # 导入：圈 X → 分流 → 引用 → 添加，不要开「强制策略」。
-# 策略组名必须已存在：越过山丘、蓝莓桥、🚫 屏蔽系统更新
-# 订阅资源标签：AI = 越过山丘，通用 = 蓝莓桥
+#
+# 策略组名（自定义策略）必须和下面第三列一致，且不能和订阅资源同名：
+#   🤖 AI代理、🚀 通用代理、🚫 屏蔽系统更新
+# 订阅资源标签（PROXY 那两行）保持：
+#   AI = 越过山丘，通用 = 蓝莓桥
 #
 # 本文件只写必须压过 blackmatrix7 远程列表的例外，以及上游遗漏的 AI 域名。
 # OpenAI / Claude / Gemini / Microsoft / 国内 / 广告仍用 conf 里的 filter_remote。
 
 # 测速地址：不走 direct / 广告拦截
-HOST,www.gstatic.com,越过山丘
-HOST-SUFFIX,gstatic.com,越过山丘
-HOST,cp.cloudflare.com,越过山丘
+HOST,www.gstatic.com,🤖 AI代理
+HOST-SUFFIX,gstatic.com,🤖 AI代理
+HOST,cp.cloudflare.com,🤖 AI代理
 # 圈 X 在 iOS 上拦截 captive 会影响未认证 Wi-Fi 登录
 HOST,captive.apple.com,direct
 
-# DNS，避免落入 final → 蓝莓桥
+# DNS，避免落入 final → 🚀 通用代理
 IP-CIDR,223.5.5.5/32,direct,no-resolve
 IP-CIDR,223.6.6.6/32,direct,no-resolve
 IP-CIDR,119.29.29.29/32,direct,no-resolve
@@ -60,59 +63,59 @@ HOST-SUFFIX,bing.com.cn,direct
 
 # 微软 / Copilot / 国际 Bing 走通用订阅，不占用 AI
 # 必须写精确 HOST，不能 HOST-SUFFIX,bing.com，否则会吃掉 cn.bing.com
-HOST,www.bing.com,蓝莓桥
-HOST,bing.com,蓝莓桥
-HOST,r.bing.com,蓝莓桥
-HOST,sydney.bing.com,蓝莓桥
-HOST,services.bingapis.com,蓝莓桥
-HOST-SUFFIX,edgeservices.bing.com,蓝莓桥
-HOST-SUFFIX,copilot.microsoft.com,蓝莓桥
-HOST-SUFFIX,copilot.cloud.microsoft,蓝莓桥
-HOST-SUFFIX,githubcopilot.com,蓝莓桥
-HOST,copilot-proxy.githubusercontent.com,蓝莓桥
-HOST,copilot-workspace.githubnext.com,蓝莓桥
-HOST,gateway.bingviz.microsoft.net,蓝莓桥
-HOST,gateway.bingviz.microsoftapp.net,蓝莓桥
+HOST,www.bing.com,🚀 通用代理
+HOST,bing.com,🚀 通用代理
+HOST,r.bing.com,🚀 通用代理
+HOST,sydney.bing.com,🚀 通用代理
+HOST,services.bingapis.com,🚀 通用代理
+HOST-SUFFIX,edgeservices.bing.com,🚀 通用代理
+HOST-SUFFIX,copilot.microsoft.com,🚀 通用代理
+HOST-SUFFIX,copilot.cloud.microsoft,🚀 通用代理
+HOST-SUFFIX,githubcopilot.com,🚀 通用代理
+HOST,copilot-proxy.githubusercontent.com,🚀 通用代理
+HOST,copilot-workspace.githubnext.com,🚀 通用代理
+HOST,gateway.bingviz.microsoft.net,🚀 通用代理
+HOST,gateway.bingviz.microsoftapp.net,🚀 通用代理
 
 # 上游遗漏或更新较慢的海外 AI。iOS 上 Grok 走 AI。
-HOST-SUFFIX,chat.com,越过山丘
-HOST-SUFFIX,sora.com,越过山丘
-HOST-SUFFIX,claudeusercontent.com,越过山丘
-HOST,aistudio.google.com,越过山丘
-HOST,notebooklm.google.com,越过山丘
-HOST-SUFFIX,perplexity.ai,越过山丘
-HOST-SUFFIX,pplx.ai,越过山丘
-HOST-SUFFIX,poe.com,越过山丘
-HOST-SUFFIX,x.ai,越过山丘
-HOST-SUFFIX,grok.com,越过山丘
-HOST-SUFFIX,mistral.ai,越过山丘
-HOST-SUFFIX,groq.com,越过山丘
-HOST-SUFFIX,huggingface.co,越过山丘
-HOST-SUFFIX,hf.co,越过山丘
-HOST-SUFFIX,cohere.com,越过山丘
-HOST-SUFFIX,together.ai,越过山丘
-HOST-SUFFIX,replicate.com,越过山丘
-HOST-SUFFIX,openrouter.ai,越过山丘
-HOST-SUFFIX,deepinfra.com,越过山丘
-HOST-SUFFIX,fireworks.ai,越过山丘
-HOST-SUFFIX,fal.ai,越过山丘
-HOST-SUFFIX,stability.ai,越过山丘
-HOST-SUFFIX,midjourney.com,越过山丘
-HOST-SUFFIX,runwayml.com,越过山丘
-HOST-SUFFIX,leonardo.ai,越过山丘
-HOST-SUFFIX,ideogram.ai,越过山丘
-HOST-SUFFIX,elevenlabs.io,越过山丘
-HOST-SUFFIX,suno.ai,越过山丘
-HOST-SUFFIX,udio.com,越过山丘
-HOST-SUFFIX,lumalabs.ai,越过山丘
-HOST-SUFFIX,character.ai,越过山丘
-HOST-SUFFIX,phind.com,越过山丘
-HOST-SUFFIX,cursor.com,越过山丘
-HOST-SUFFIX,cursor.sh,越过山丘
-HOST-SUFFIX,windsurf.com,越过山丘
-HOST-SUFFIX,codeium.com,越过山丘
-HOST-SUFFIX,v0.dev,越过山丘
-HOST-SUFFIX,bolt.new,越过山丘
-HOST-SUFFIX,lovable.dev,越过山丘
-HOST-SUFFIX,manus.im,越过山丘
-HOST-SUFFIX,genspark.ai,越过山丘
+HOST-SUFFIX,chat.com,🤖 AI代理
+HOST-SUFFIX,sora.com,🤖 AI代理
+HOST-SUFFIX,claudeusercontent.com,🤖 AI代理
+HOST,aistudio.google.com,🤖 AI代理
+HOST,notebooklm.google.com,🤖 AI代理
+HOST-SUFFIX,perplexity.ai,🤖 AI代理
+HOST-SUFFIX,pplx.ai,🤖 AI代理
+HOST-SUFFIX,poe.com,🤖 AI代理
+HOST-SUFFIX,x.ai,🤖 AI代理
+HOST-SUFFIX,grok.com,🤖 AI代理
+HOST-SUFFIX,mistral.ai,🤖 AI代理
+HOST-SUFFIX,groq.com,🤖 AI代理
+HOST-SUFFIX,huggingface.co,🤖 AI代理
+HOST-SUFFIX,hf.co,🤖 AI代理
+HOST-SUFFIX,cohere.com,🤖 AI代理
+HOST-SUFFIX,together.ai,🤖 AI代理
+HOST-SUFFIX,replicate.com,🤖 AI代理
+HOST-SUFFIX,openrouter.ai,🤖 AI代理
+HOST-SUFFIX,deepinfra.com,🤖 AI代理
+HOST-SUFFIX,fireworks.ai,🤖 AI代理
+HOST-SUFFIX,fal.ai,🤖 AI代理
+HOST-SUFFIX,stability.ai,🤖 AI代理
+HOST-SUFFIX,midjourney.com,🤖 AI代理
+HOST-SUFFIX,runwayml.com,🤖 AI代理
+HOST-SUFFIX,leonardo.ai,🤖 AI代理
+HOST-SUFFIX,ideogram.ai,🤖 AI代理
+HOST-SUFFIX,elevenlabs.io,🤖 AI代理
+HOST-SUFFIX,suno.ai,🤖 AI代理
+HOST-SUFFIX,udio.com,🤖 AI代理
+HOST-SUFFIX,lumalabs.ai,🤖 AI代理
+HOST-SUFFIX,character.ai,🤖 AI代理
+HOST-SUFFIX,phind.com,🤖 AI代理
+HOST-SUFFIX,cursor.com,🤖 AI代理
+HOST-SUFFIX,cursor.sh,🤖 AI代理
+HOST-SUFFIX,windsurf.com,🤖 AI代理
+HOST-SUFFIX,codeium.com,🤖 AI代理
+HOST-SUFFIX,v0.dev,🤖 AI代理
+HOST-SUFFIX,bolt.new,🤖 AI代理
+HOST-SUFFIX,lovable.dev,🤖 AI代理
+HOST-SUFFIX,manus.im,🤖 AI代理
+HOST-SUFFIX,genspark.ai,🤖 AI代理
