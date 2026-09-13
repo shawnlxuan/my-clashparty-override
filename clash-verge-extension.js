@@ -7,7 +7,8 @@
  * - AI 节点使用 ipv4-prefer（优先 IPv4，必要时回退 IPv6）；
  * - 自动沿用通用订阅原本的测速 URL；
  * - AI provider 使用 Clash Verge User-Agent；
- * - AI provider 使用独立缓存路径。
+ * - AI provider 使用独立缓存路径；
+ * - 分流 REJECT 屏蔽 Apple OTA（mesu / gdmf / appldnld），不使用重写。
  */
 
 var AI_SUB_URL = "https://example.com/replace-with-your-ai-subscription";
@@ -702,9 +703,33 @@ function main(config, profileName) {
     "IP-CIDR6,fe80::/10,DIRECT,no-resolve",
 
     /*
+     * 公司 GitLab。域名本身不在 GEOSITE,cn 时会落到 MATCH → 通用代理。
+     * 先按 host:7777 精确直连，再按域名兜底（网页 / SSH 等同主机其它端口）。
+     */
+    "AND,((DOMAIN,gitlab.keeson.com),(DST-PORT,7777)),DIRECT",
+    "DOMAIN,gitlab.keeson.com,DIRECT",
+
+    /*
      * 广告和跟踪域名。
      */
     "GEOSITE,category-ads-all,REJECT",
+
+    /*
+     * 屏蔽 Apple OTA（iOS / iPadOS 系统更新目录和固件 CDN）。
+     * 只走分流 REJECT，不重写、不 MITM。
+     * 不要引用 blackmatrix7 SystemOTA 整集：其中 ocsp.apple.com /
+     * gs.apple.com 会误伤证书校验和激活。
+     * 本机若要升级：删掉下面这组，或改成 DIRECT。
+     */
+    "DOMAIN-SUFFIX,mesu.apple.com,REJECT",
+    "DOMAIN,mesu.g.aaplimg.com,REJECT",
+    "DOMAIN-SUFFIX,gdmf.apple.com,REJECT",
+    "DOMAIN,gdmf-ados.apple.com,REJECT",
+    "DOMAIN,gdmf.g.aaplimg.com,REJECT",
+    "DOMAIN-SUFFIX,appldnld.apple.com,REJECT",
+    "DOMAIN,appldnld.g.aaplimg.com,REJECT",
+    "DOMAIN,updates.cdn-apple.com,REJECT",
+    "DOMAIN,updates-http.cdn-apple.com,REJECT",
 
     /*
      * Bing 国内版直连。必须写在 Copilot / Microsoft 之前，

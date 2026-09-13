@@ -5,7 +5,8 @@
  * - 当前 Profile 作为通用订阅，脚本自动读取其中的 proxies/proxy-providers；
  * - 额外注入 AI 专用订阅；
  * - FlClash 可绑定到单个 Profile；
- * - Bettbox 作为全局覆写使用，并只对目标 Profile 启用。
+ * - Bettbox 作为全局覆写使用，并只对目标 Profile 启用；
+ * - 分流 REJECT 屏蔽 Apple OTA，与 Clash Verge / 圈 X 对齐。
  */
 
 const Compatible_With_Bettbox = { ruleOptionsEnable: true };
@@ -330,6 +331,17 @@ function main(config) {
     "IP-CIDR6,fe80::/10,DIRECT,no-resolve",
 
     "GEOSITE,category-ads-all,REJECT",
+
+    /* 屏蔽 Apple OTA。分流 REJECT，不用重写。见 clash-verge-extension.js 同组注释。 */
+    "DOMAIN-SUFFIX,mesu.apple.com,REJECT",
+    "DOMAIN,mesu.g.aaplimg.com,REJECT",
+    "DOMAIN-SUFFIX,gdmf.apple.com,REJECT",
+    "DOMAIN,gdmf-ados.apple.com,REJECT",
+    "DOMAIN,gdmf.g.aaplimg.com,REJECT",
+    "DOMAIN-SUFFIX,appldnld.apple.com,REJECT",
+    "DOMAIN,appldnld.g.aaplimg.com,REJECT",
+    "DOMAIN,updates.cdn-apple.com,REJECT",
+    "DOMAIN,updates-http.cdn-apple.com,REJECT",
 
     /* Bing 国内版直连。 */
     "DOMAIN,cn.bing.com,DIRECT",
