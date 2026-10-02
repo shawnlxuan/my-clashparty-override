@@ -6,6 +6,7 @@
  * - 额外注入 AI 专用订阅；
  * - FlClash 可绑定到单个 Profile；
  * - Bettbox 作为全局覆写使用，并只对目标 Profile 启用；
+ * - 同步 Verge 的 DNS、规则解析、ChatGPT 依赖与招聘站分流修复；
  * - 分流 REJECT 屏蔽 Apple OTA，与 Clash Verge / 圈 X 对齐。
  */
 
@@ -98,10 +99,15 @@ function main(config) {
   }
 
   config.mode = "rule";
-  config.ipv6 = false;
   config["unified-delay"] = true;
   config["tcp-concurrent"] = true;
   config["find-process-mode"] = "always";
+
+  /* 切换 Wi-Fi、移动网络或有线连接时跟随系统路由。 */
+  delete config["interface-name"];
+  if (config.tun && typeof config.tun === "object" && !Array.isArray(config.tun)) {
+    config.tun["auto-detect-interface"] = true;
+  }
 
   config["geo-auto-update"] = true;
   config["geo-update-interval"] = 24;
@@ -121,7 +127,7 @@ function main(config) {
   }
   config.profile["store-selected"] = true;
 
-  /* Android：保留原 DNS 其余字段，覆盖分流所需的关键项。 */
+  /* 保留手机端 DNS 模式和域名策略，使用与 Verge 相同的普通 DNS。 */
   var originalDNS =
     config.dns && typeof config.dns === "object" && !Array.isArray(config.dns)
       ? config.dns
@@ -129,21 +135,22 @@ function main(config) {
 
   config.dns = Object.assign({}, originalDNS, {
     enable: true,
-    ipv6: false,
+    ipv6: config.ipv6 !== false && originalDNS.ipv6 !== false,
     "respect-rules": false,
     "prefer-h3": false,
     "use-hosts": true,
     "use-system-hosts": true,
     "cache-algorithm": "arc",
-    "default-nameserver": ["223.5.5.5", "119.29.29.29", "1.1.1.1"],
-    nameserver: [
-      "https://dns.alidns.com/dns-query",
-      "https://doh.pub/dns-query",
-      "https://1.1.1.1/dns-query"
-    ],
-    "proxy-server-nameserver": ["223.5.5.5", "119.29.29.29", "1.1.1.1"],
+    "default-nameserver": ["223.5.5.5", "119.29.29.29"],
+    nameserver: ["223.5.5.5", "119.29.29.29"],
+    "proxy-server-nameserver": ["223.5.5.5", "119.29.29.29"],
     "direct-nameserver": ["223.5.5.5", "119.29.29.29"]
   });
+
+  /* 清除原订阅继承的后备解析链，避免仍等待不可达的加密 DNS。 */
+  delete config.dns.fallback;
+  delete config.dns["fallback-filter"];
+  delete config.dns["fallback-lazy-query"];
 
   /*
    * Android App 兼容：这些域名返回真实 IP。
@@ -330,6 +337,13 @@ function main(config) {
     "IP-CIDR6,fc00::/7,DIRECT,no-resolve",
     "IP-CIDR6,fe80::/10,DIRECT,no-resolve",
 
+    /* ChatGPT 的 WorkOS 资源和接口保持同一个 AI 出口，优先于广告规则。 */
+    "DOMAIN,cdn.workos.com,🤖 AI代理",
+    "DOMAIN,forwarder.workos.com,🤖 AI代理",
+    "DOMAIN,setup.workos.com,🤖 AI代理",
+    "DOMAIN,images.workoscdn.com,🤖 AI代理",
+    "DOMAIN,workos.imgix.net,🤖 AI代理",
+
     "GEOSITE,category-ads-all,REJECT",
 
     /* 屏蔽 Apple OTA。分流 REJECT，不用重写。见 clash-verge-extension.js 同组注释。 */
@@ -367,13 +381,14 @@ function main(config) {
     "DOMAIN-SUFFIX,x.ai,🚀 通用代理",
     "DOMAIN-SUFFIX,grok.com,🚀 通用代理",
 
-    "RULE-SET,BM7-OpenAI,🤖 AI代理",
-    "RULE-SET,BM7-Anthropic,🤖 AI代理",
-    "RULE-SET,BM7-Claude,🤖 AI代理",
-    "RULE-SET,BM7-BardAI,🤖 AI代理",
-    "RULE-SET,BM7-Gemini,🤖 AI代理",
-    "RULE-SET,BM7-Copilot,🤖 AI代理",
-    "RULE-SET,BM7-Civitai,🤖 AI代理",
+    /* classical 规则集只匹配域名或已有 IP，不为分流额外查询 DNS。 */
+    "RULE-SET,BM7-OpenAI,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-Anthropic,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-Claude,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-BardAI,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-Gemini,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-Copilot,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-Civitai,🤖 AI代理,no-resolve",
     "GEOSITE,category-ai-!cn,🤖 AI代理",
 
     "DOMAIN-SUFFIX,chat.com,🤖 AI代理",
@@ -420,8 +435,10 @@ function main(config) {
     "DOMAIN,services.googleapis.cn,🚀 通用代理",
     "DOMAIN-SUFFIX,xn--ngstr-lra8j.com,🚀 通用代理",
 
-    "RULE-SET,BM7-Microsoft,🚀 通用代理",
+    "RULE-SET,BM7-Microsoft,🚀 通用代理,no-resolve",
     "GEOSITE,cn,DIRECT",
+    /* 仅 jobs. 域名主动解析 IP；中国大陆 IP 直连，海外 IP 继续匹配。 */
+    "AND,((DOMAIN-WILDCARD,jobs.*),(GEOIP,CN)),DIRECT",
     "GEOIP,CN,DIRECT,no-resolve",
     "MATCH,🚀 通用代理"
   ];

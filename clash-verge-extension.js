@@ -2,7 +2,9 @@
  * Clash Verge Rev：通用订阅作为主配置，额外注入 AI 订阅
  *
  * 修正版：
- * - 不覆盖通用订阅原有的全局 IPv6、User-Agent、指纹和网络设置；
+ * - 保留全局 IPv6、User-Agent 和指纹，清除固定网卡绑定；
+ * - 使用当前网络可达的 DNS，清理继承的 fallback；
+ * - 远程规则集不主动解析 IP，避免国内直连前等待 DNS 超时；
  * - 内核连节点走直连，避免规则模式把节点握手再次分流；
  * - AI 节点使用 ipv4-prefer（优先 IPv4，必要时回退 IPv6）；
  * - 自动沿用通用订阅原本的测速 URL；
@@ -208,11 +210,13 @@ function main(config, profileName) {
    * - ipv6
    * - global-ua
    * - global-client-fingerprint
-   * - interface-name
    */
   config.mode = "rule";
   config["unified-delay"] = true;
   config["tcp-concurrent"] = true;
+
+  /* 系统代理跟随系统路由，避免从 Wi-Fi 切到有线后仍绑定 WLAN。 */
+  delete config["interface-name"];
 
   /*
    * 让 PROCESS-NAME 能识别内核进程。
@@ -233,10 +237,10 @@ function main(config, profileName) {
   }
 
   /*
- * 显式修复 DNS。
+ * 使用在当前公司有线 / 无线网络验证可达的普通 DNS。
  *
  * 保留原配置的 enhanced-mode、fake-ip-range 等字段，
- * 只覆盖可能造成解析失败的关键 DNS 项。
+ * 加密 DNS 在当前网络不可用；同时清理旧 fallback，避免混用两套配置。
  */
   var originalDNS =
     config.dns &&
@@ -264,9 +268,9 @@ function main(config, profileName) {
 
       /*
        * 是否返回 AAAA 记录。
-       * 你的原始订阅配置本身启用了 IPv6，因此保留。
+       * 尊重原订阅的 DNS 开关；全局关闭 IPv6 时不返回 AAAA。
        */
-      ipv6: true,
+      ipv6: config.ipv6 !== false && originalDNS.ipv6 !== false,
 
       /*
        * 用于解析 DoH 服务器自身域名。
@@ -274,17 +278,15 @@ function main(config, profileName) {
        */
       "default-nameserver": [
         "223.5.5.5",
-        "119.29.29.29",
-        "1.1.1.1"
+        "119.29.29.29"
       ],
 
       /*
        * 普通目标域名解析。
        */
       nameserver: [
-        "https://dns.alidns.com/dns-query",
-        "https://doh.pub/dns-query",
-        "https://1.1.1.1/dns-query"
+        "223.5.5.5",
+        "119.29.29.29"
       ],
 
       /*
@@ -295,8 +297,7 @@ function main(config, profileName) {
        */
       "proxy-server-nameserver": [
         "223.5.5.5",
-        "119.29.29.29",
-        "1.1.1.1"
+        "119.29.29.29"
       ],
 
       /*
@@ -308,6 +309,11 @@ function main(config, profileName) {
       ]
     }
   );
+
+  // Object.assign 会保留原订阅字段，必须显式清理不可达的后备解析链。
+  delete config.dns.fallback;
+  delete config.dns["fallback-filter"];
+  delete config.dns["fallback-lazy-query"];
 
   /*
    * 测速域名必须解析真实 IP。
@@ -710,6 +716,17 @@ function main(config, profileName) {
     "DOMAIN,gitlab.keeson.com,DIRECT",
 
     /*
+     * ChatGPT 官方网络清单包含 WorkOS 的资源和接口。
+     * 这些域名不在当前 BM7-OpenAI 集合中，实测会落入通用代理。
+     * 提前指定同一个 AI 出口，避免网页与认证依赖使用不同节点。
+     */
+    "DOMAIN,cdn.workos.com,🤖 AI代理",
+    "DOMAIN,forwarder.workos.com,🤖 AI代理",
+    "DOMAIN,setup.workos.com,🤖 AI代理",
+    "DOMAIN,images.workoscdn.com,🤖 AI代理",
+    "DOMAIN,workos.imgix.net,🤖 AI代理",
+
+    /*
      * 广告和跟踪域名。
      */
     "GEOSITE,category-ads-all,REJECT",
@@ -765,13 +782,15 @@ function main(config, profileName) {
      * Copilot 规则集仍保留在 Microsoft 之前，但微软域名已在上面
      * 改走通用；其中夹带的 openai.com / chatgpt.com 仍由 OpenAI 命中 AI。
      */
-    "RULE-SET,BM7-OpenAI,🤖 AI代理",
-    "RULE-SET,BM7-Anthropic,🤖 AI代理",
-    "RULE-SET,BM7-Claude,🤖 AI代理",
-    "RULE-SET,BM7-BardAI,🤖 AI代理",
-    "RULE-SET,BM7-Gemini,🤖 AI代理",
-    "RULE-SET,BM7-Copilot,🤖 AI代理",
-    "RULE-SET,BM7-Civitai,🤖 AI代理",
+    // classical 集合可能包含 IP/ASN；只匹配已有 IP，不为分流额外查询 DNS。
+    // 域名规则仍正常匹配；实际 DIRECT / 节点连接会按需解析。
+    "RULE-SET,BM7-OpenAI,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-Anthropic,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-Claude,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-BardAI,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-Gemini,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-Copilot,🤖 AI代理,no-resolve",
+    "RULE-SET,BM7-Civitai,🤖 AI代理,no-resolve",
 
     /*
      * MetaCubeX GeoSite 的海外 AI 汇总分类。
@@ -831,12 +850,20 @@ function main(config, profileName) {
      * Office/OneDrive/Teams、Windows、Azure、Bing、Xbox 等服务。
      * 国内 Bing 与微软 Copilot 已在它之前单独分流。
      */
-    "RULE-SET,BM7-Microsoft,🚀 通用代理",
+    "RULE-SET,BM7-Microsoft,🚀 通用代理,no-resolve",
 
     /*
      * 中国大陆域名和 IP。
      */
     "GEOSITE,cn,DIRECT",
+
+    /*
+     * 企业招聘站常用 jobs. 子域名，但其主域名未必在 geosite:cn。
+     * 仅对这类域名解析目标 IP；解析到中国大陆 IP 才直连，
+     * 其余仍由后续规则处理，避免把海外 jobs. 网站误判为国内。
+     */
+    "AND,((DOMAIN-WILDCARD,jobs.*),(GEOIP,CN)),DIRECT",
+
     "GEOIP,CN,DIRECT,no-resolve",
 
     /*

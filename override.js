@@ -303,31 +303,39 @@ const ruleProviders = {
 
 // 【修复】彻底重排所有规则的优先级
 const baseRules = [
-    // --- 1. 广告和隐私规则 (最高优先级) ---
+    // ChatGPT 的 WorkOS 资源和接口与 OpenAI 保持同一个出口，优先于广告规则。
+    `DOMAIN,cdn.workos.com,OpenAI`,
+    `DOMAIN,forwarder.workos.com,OpenAI`,
+    `DOMAIN,setup.workos.com,OpenAI`,
+    `DOMAIN,images.workoscdn.com,OpenAI`,
+    `DOMAIN,workos.imgix.net,OpenAI`,
+
+    // --- 1. 广告和隐私规则 ---
     `RULE-SET,ADBlock,广告拦截`,
-    `RULE-SET,AdditionalFilter,广告拦截`,
+    `RULE-SET,AdditionalFilter,广告拦截,no-resolve`,
 
     // --- 2. 高优先级直连规则 (CN/Private/SteamFix) ---
-    `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT}`, // 【修复】使用 .list 规则
-    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT}`, // (保留) 原始 SteamFix
+    // classical 规则集只匹配域名或已有 IP，避免分流时等待额外 DNS 查询。
+    `RULE-SET,SteamCN,${PROXY_GROUPS.DIRECT},no-resolve`, // 【修复】使用 .list 规则
+    `RULE-SET,SteamFix,${PROXY_GROUPS.DIRECT},no-resolve`, // (保留) 原始 SteamFix
     `GEOSITE,PRIVATE,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,CN,${PROXY_GROUPS.DIRECT}`,
     `GEOIP,PRIVATE,${PROXY_GROUPS.DIRECT},no-resolve`,
     `GEOIP,CN,${PROXY_GROUPS.DIRECT},no-resolve`,
     `GEOSITE,GOOGLE-PLAY@CN,${PROXY_GROUPS.DIRECT}`,
     `GEOSITE,MICROSOFT@CN,${PROXY_GROUPS.DIRECT}`,
-    `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT}`,
+    `RULE-SET,GoogleFCM,${PROXY_GROUPS.DIRECT},no-resolve`,
 
     // --- 3. 特定服务规则 (AI, 媒体等) ---
     // 【修复】使用 .list 规则
-    `RULE-SET,OpenAI,OpenAI`,
-    `RULE-SET,Gemini,Gemini`,
-    `RULE-SET,Claude,Claude`,
-    `RULE-SET,GitHub,GitHub`,
+    `RULE-SET,OpenAI,OpenAI,no-resolve`,
+    `RULE-SET,Gemini,Gemini,no-resolve`,
+    `RULE-SET,Claude,Claude,no-resolve`,
+    `RULE-SET,GitHub,GitHub,no-resolve`,
     // 【修改】Steam 规则指向 SELECT
-    `RULE-SET,Steam,${PROXY_GROUPS.SELECT}`,
+    `RULE-SET,Steam,${PROXY_GROUPS.SELECT},no-resolve`,
     // 【新增】Xbox 规则
-    `RULE-SET,Xbox,Xbox`,
+    `RULE-SET,Xbox,Xbox,no-resolve`,
     
     `GEOSITE,TELEGRAM,Telegram`,
     `GEOSITE,YOUTUBE,YouTube`,
@@ -343,18 +351,21 @@ const baseRules = [
     `GEOIP,GOOGLE,Gemini,no-resolve`,
     
     // --- 5. 被删除的分组 (指向手动) ---
-    `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL}`, // (修改)
-    `RULE-SET,Crypto,${PROXY_GROUPS.MANUAL}`, // (修改)
-    `RULE-SET,EHentai,${PROXY_GROUPS.MANUAL}`, // (修改)
-    `RULE-SET,TikTok,${PROXY_GROUPS.MANUAL}`, // (修改)
+    `RULE-SET,TruthSocial,${PROXY_GROUPS.MANUAL},no-resolve`, // (修改)
+    `RULE-SET,Crypto,${PROXY_GROUPS.MANUAL},no-resolve`, // (修改)
+    `RULE-SET,EHentai,${PROXY_GROUPS.MANUAL},no-resolve`, // (修改)
+    `RULE-SET,TikTok,${PROXY_GROUPS.MANUAL},no-resolve`, // (修改)
     `GEOSITE,SPOTIFY,${PROXY_GROUPS.MANUAL}`, // (修改)
     `GEOSITE,BAHAMUT,${PROXY_GROUPS.MANUAL}`, // (修改)
     `GEOSITE,PIKPAK,${PROXY_GROUPS.MANUAL}`, // (修改)
     
+    // 企业招聘站：仅 jobs. 域名主动解析 IP，中国大陆 IP 才直连。
+    `AND,((DOMAIN-WILDCARD,jobs.*),(GEOIP,CN)),${PROXY_GROUPS.DIRECT}`,
+
     // --- 6. 静态资源 ---
     `RULE-SET,StaticResources,静态资源`,
-    `RULE-SET,CDNResources,静态资源`,
-    `RULE-SET,AdditionalCDNResources,静态资源`,
+    `RULE-SET,CDNResources,静态资源,no-resolve`,
+    `RULE-SET,AdditionalCDNResources,静态资源,no-resolve`,
 
     // --- 7. GFW 规则 ---
     `RULE-SET,GFWList,${PROXY_GROUPS.SELECT}`,
@@ -395,55 +406,64 @@ const snifferConfig = {
     ]
 };
 
-function buildDnsConfig({ mode, fakeIpFilter }) {
+function buildDnsConfig({ mode, fakeIpFilter, originalDNS }) {
     const config = {
+        ...originalDNS,
         "enable": true,
-        "ipv6": ipv6Enabled,
+        "ipv6": ipv6Enabled && originalDNS.ipv6 !== false,
+        "respect-rules": false,
         "prefer-h3": false,
+        "use-hosts": true,
+        "use-system-hosts": true,
+        "cache-algorithm": "arc",
         "enhanced-mode": mode,
         "default-nameserver": [
-            "119.29.29.29",
-            "223.5.5.5"
+            "223.5.5.5",
+            "119.29.29.29"
         ],
         "nameserver": [
-            "system",
             "223.5.5.5",
-            "119.29.29.29",
-            "180.184.1.1"
-        ],
-        "fallback": [
-            "https://dns.cloudflare.com/dns-query",
-            "https://dns.sb/dns-query",
-            "tcp://208.67.222.222",
-            "tcp://8.26.56.2"
+            "119.29.29.29"
         ],
         "proxy-server-nameserver": [
-            "https://dns.alidns.com/dns-query",
-            "tls://dot.pub"
+            "223.5.5.5",
+            "119.29.29.29"
+        ],
+        "direct-nameserver": [
+            "223.5.5.5",
+            "119.29.29.29"
         ]
     };
 
-    if (fakeIpFilter) {
-        config["fake-ip-filter"] = fakeIpFilter;
+    delete config.fallback;
+    delete config["fallback-filter"];
+    delete config["fallback-lazy-query"];
+
+    // 保留原域名策略和过滤项；whitelist 模式不追加语义相反的排除项。
+    if (mode === "fake-ip" && config["fake-ip-filter-mode"] !== "whitelist") {
+        const originalFilter = Array.isArray(originalDNS["fake-ip-filter"])
+            ? originalDNS["fake-ip-filter"]
+            : [];
+        config["fake-ip-filter"] = [...new Set([...originalFilter, ...fakeIpFilter])];
     }
 
     return config;
 }
 
-const dnsConfig = buildDnsConfig({ mode: "redir-host" });
-const dnsConfigFakeIp = buildDnsConfig({
-    mode: "fake-ip",
-    fakeIpFilter: [
-        "geosite:private",
-        "geosite:connectivity-check",
-        "Mijia Cloud",
-        "dlg.io.mi.com",
-        "localhost.ptlogin2.qq.com",
-        "*.icloud.com",
-        "*.stun.*.*",
-        "*.stun.*.*.*"
-    ]
-});
+const defaultFakeIpFilter = [
+    "geosite:private",
+    "geosite:connectivity-check",
+    "Mijia Cloud",
+    "dlg.io.mi.com",
+    "localhost.ptlogin2.qq.com",
+    "*.icloud.com",
+    "*.stun.*.*",
+    "*.stun.*.*.*",
+    "www.gstatic.com",
+    "+.gstatic.com",
+    "cp.cloudflare.com",
+    "captive.apple.com"
+];
 
 const geoxURL = {
     "geoip": "https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geoip.dat",
@@ -779,6 +799,13 @@ function buildProxyGroups({
 
 function main(config = {}) {
     const resultConfig = { ...config, proxies: config.proxies || [] };
+    delete resultConfig["interface-name"];
+    if (resultConfig.tun && typeof resultConfig.tun === "object" && !Array.isArray(resultConfig.tun)) {
+        resultConfig.tun = { ...resultConfig.tun, "auto-detect-interface": true };
+    }
+    const originalDNS = resultConfig.dns && typeof resultConfig.dns === "object" && !Array.isArray(resultConfig.dns)
+        ? resultConfig.dns
+        : {};
     const { countryInfo, proxyInfo, lowCost, hasLanding } = scanProxies(resultConfig, { landing });
     const landingEnabled = landing && hasLanding;
     const hasProxyProviders = !!(resultConfig["proxy-providers"] && Object.keys(resultConfig["proxy-providers"]).length);
@@ -871,7 +898,11 @@ function main(config = {}) {
         "rule-providers": ruleProviders,
         "rules": finalRules,
         "sniffer": snifferConfig,
-        "dns": fakeIPEnabled ? dnsConfigFakeIp : dnsConfig,
+        "dns": buildDnsConfig({
+            mode: fakeIPEnabled ? "fake-ip" : "redir-host",
+            fakeIpFilter: defaultFakeIpFilter,
+            originalDNS
+        }),
         "geodata-mode": true,
         "geox-url": geoxURL,
     });

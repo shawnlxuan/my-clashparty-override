@@ -1,6 +1,6 @@
 # CMFA / Mihomo 双订阅融合配置
 #
-# 分流与 Clash Verge 扩展脚本 (extension.js) 对齐：
+# 分流与 clash-verge-extension.js 对齐：
 # - AI 专用订阅：海外 AI（ChatGPT / Claude / Gemini 等）
 # - 通用订阅：其余海外流量、微软 / Copilot / 国际 Bing
 # - 国内 Bing、局域网、大陆站点：直连
@@ -66,15 +66,13 @@ dns:
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
-    - 1.1.1.1
+  # 与 Verge 对齐：普通 DNS 避免受限网络中的 DoH 超时，不配置 fallback。
   nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
-    - https://1.1.1.1/dns-query
+    - 223.5.5.5
+    - 119.29.29.29
   proxy-server-nameserver:
     - 223.5.5.5
     - 119.29.29.29
-    - 1.1.1.1
   direct-nameserver:
     - 223.5.5.5
     - 119.29.29.29
@@ -258,6 +256,13 @@ rules:
   - IP-CIDR6,fc00::/7,DIRECT,no-resolve
   - IP-CIDR6,fe80::/10,DIRECT,no-resolve
 
+  # ChatGPT 的 WorkOS 资源和接口保持同一个 AI 出口，优先于广告规则。
+  - DOMAIN,cdn.workos.com,🤖 AI代理
+  - DOMAIN,forwarder.workos.com,🤖 AI代理
+  - DOMAIN,setup.workos.com,🤖 AI代理
+  - DOMAIN,images.workoscdn.com,🤖 AI代理
+  - DOMAIN,workos.imgix.net,🤖 AI代理
+
   - GEOSITE,category-ads-all,REJECT
 
   # 屏蔽 Apple OTA。分流 REJECT，不用重写。不要引用 SystemOTA 整集。
@@ -295,13 +300,14 @@ rules:
   - DOMAIN-SUFFIX,x.ai,🚀 通用代理
   - DOMAIN-SUFFIX,grok.com,🚀 通用代理
 
-  - RULE-SET,BM7-OpenAI,🤖 AI代理
-  - RULE-SET,BM7-Anthropic,🤖 AI代理
-  - RULE-SET,BM7-Claude,🤖 AI代理
-  - RULE-SET,BM7-BardAI,🤖 AI代理
-  - RULE-SET,BM7-Gemini,🤖 AI代理
-  - RULE-SET,BM7-Copilot,🤖 AI代理
-  - RULE-SET,BM7-Civitai,🤖 AI代理
+  # classical 规则集只匹配域名或已有 IP，不为分流额外查询 DNS。
+  - RULE-SET,BM7-OpenAI,🤖 AI代理,no-resolve
+  - RULE-SET,BM7-Anthropic,🤖 AI代理,no-resolve
+  - RULE-SET,BM7-Claude,🤖 AI代理,no-resolve
+  - RULE-SET,BM7-BardAI,🤖 AI代理,no-resolve
+  - RULE-SET,BM7-Gemini,🤖 AI代理,no-resolve
+  - RULE-SET,BM7-Copilot,🤖 AI代理,no-resolve
+  - RULE-SET,BM7-Civitai,🤖 AI代理,no-resolve
 
   - GEOSITE,category-ai-!cn,🤖 AI代理
 
@@ -349,9 +355,11 @@ rules:
   - DOMAIN,services.googleapis.cn,🚀 通用代理
   - DOMAIN-SUFFIX,xn--ngstr-lra8j.com,🚀 通用代理
 
-  - RULE-SET,BM7-Microsoft,🚀 通用代理
+  - RULE-SET,BM7-Microsoft,🚀 通用代理,no-resolve
 
   - GEOSITE,cn,DIRECT
+  # 仅 jobs. 域名主动解析 IP；中国大陆 IP 直连，海外 IP 继续匹配。
+  - AND,((DOMAIN-WILDCARD,jobs.*),(GEOIP,CN)),DIRECT
   - GEOIP,CN,DIRECT,no-resolve
 
   - MATCH,🚀 通用代理
