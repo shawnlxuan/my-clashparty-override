@@ -6,7 +6,8 @@
  * - 额外注入 AI 专用订阅；
  * - FlClash 可绑定到单个 Profile；
  * - Bettbox 作为全局覆写使用，并只对目标 Profile 启用；
- * - 同步 Verge 的 DNS、规则解析、ChatGPT 依赖与招聘站分流修复；
+ * - 目标域名 DNS 恢复为提交前的 DoH 列表；
+ * - 保留规则解析、ChatGPT 依赖与招聘站分流修复；
  * - 分流 REJECT 屏蔽 Apple OTA，与 Clash Verge / 圈 X 对齐。
  */
 
@@ -127,7 +128,7 @@ function main(config) {
   }
   config.profile["store-selected"] = true;
 
-  /* 保留手机端 DNS 模式和域名策略，使用与 Verge 相同的普通 DNS。 */
+  /* 保留手机端 DNS 模式和域名策略；目标域名使用 DoH，节点域名使用普通 DNS。 */
   var originalDNS =
     config.dns && typeof config.dns === "object" && !Array.isArray(config.dns)
       ? config.dns
@@ -142,12 +143,16 @@ function main(config) {
     "use-system-hosts": true,
     "cache-algorithm": "arc",
     "default-nameserver": ["223.5.5.5", "119.29.29.29"],
-    nameserver: ["223.5.5.5", "119.29.29.29"],
+    nameserver: [
+      "https://dns.alidns.com/dns-query",
+      "https://doh.pub/dns-query",
+      "https://1.1.1.1/dns-query"
+    ],
     "proxy-server-nameserver": ["223.5.5.5", "119.29.29.29"],
     "direct-nameserver": ["223.5.5.5", "119.29.29.29"]
   });
 
-  /* 清除原订阅继承的后备解析链，避免仍等待不可达的加密 DNS。 */
+  /* 清除原订阅继承的后备解析链，避免混用两套 DNS 配置。 */
   delete config.dns.fallback;
   delete config.dns["fallback-filter"];
   delete config.dns["fallback-lazy-query"];

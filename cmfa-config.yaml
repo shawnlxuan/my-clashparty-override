@@ -66,10 +66,11 @@ dns:
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
-  # 与 Verge 对齐：普通 DNS 避免受限网络中的 DoH 超时，不配置 fallback。
+  # 目标域名恢复为提交前的 DoH 列表，修复 Android ChatGPT 回复卡住的问题。
   nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+    - https://1.1.1.1/dns-query
   proxy-server-nameserver:
     - 223.5.5.5
     - 119.29.29.29
