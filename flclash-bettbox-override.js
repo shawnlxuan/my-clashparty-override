@@ -259,6 +259,7 @@ function main(config) {
   addBlackmatrixRuleProvider(config, "BM7-Copilot", "Copilot/Copilot.yaml", "copilot");
   addBlackmatrixRuleProvider(config, "BM7-Civitai", "Civitai/Civitai.yaml", "civitai");
   addBlackmatrixRuleProvider(config, "BM7-Microsoft", "Microsoft/Microsoft.yaml", "microsoft");
+  addBlackmatrixRuleProvider(config, "BM7-SteamCN", "SteamCN/SteamCN.yaml", "steam_cn");
 
   var generalSelectGroup = {
     name: "🚀 通用代理",
@@ -361,6 +362,9 @@ function main(config) {
     "DOMAIN,appldnld.g.aaplimg.com,REJECT",
     "DOMAIN,updates.cdn-apple.com,REJECT",
     "DOMAIN,updates-http.cdn-apple.com,REJECT",
+
+    /* SteamCN 下载/CDN 直连，优先于后续通用代理规则。 */
+    "RULE-SET,BM7-SteamCN,DIRECT,no-resolve",
 
     /* Bing 国内版直连。 */
     "DOMAIN,cn.bing.com,DIRECT",

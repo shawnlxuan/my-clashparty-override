@@ -556,6 +556,13 @@ function main(config, profileName) {
     "microsoft"
   );
 
+  addBlackmatrixRuleProvider(
+    config,
+    "BM7-SteamCN",
+    "SteamCN/SteamCN.yaml",
+    "steam_cn"
+  );
+
   /*
    * 通用手动选择组。
    *
@@ -708,12 +715,10 @@ function main(config, profileName) {
     "IP-CIDR6,fc00::/7,DIRECT,no-resolve",
     "IP-CIDR6,fe80::/10,DIRECT,no-resolve",
 
-    /*
-     * 公司 GitLab。域名本身不在 GEOSITE,cn 时会落到 MATCH → 通用代理。
-     * 先按 host:7777 精确直连，再按域名兜底（网页 / SSH 等同主机其它端口）。
-     */
-    "AND,((DOMAIN,gitlab.keeson.com),(DST-PORT,7777)),DIRECT",
-    "DOMAIN,gitlab.keeson.com,DIRECT",
+    /* 公司域名与快跑官网/API 优先直连，覆盖 GitLab 的所有端口。 */
+    "DOMAIN-KEYWORD,keeson,DIRECT",
+    // API Base URL 为 https://kuaipao.pro/v1；同一域名规则覆盖网页与 API。
+    "DOMAIN-SUFFIX,kuaipao.pro,DIRECT",
 
     /*
      * ChatGPT 官方网络清单包含 WorkOS 的资源和接口。
@@ -747,6 +752,9 @@ function main(config, profileName) {
     "DOMAIN,appldnld.g.aaplimg.com,REJECT",
     "DOMAIN,updates.cdn-apple.com,REJECT",
     "DOMAIN,updates-http.cdn-apple.com,REJECT",
+
+    /* SteamCN 下载/CDN 直连，优先于后续通用代理规则。 */
+    "RULE-SET,BM7-SteamCN,DIRECT,no-resolve",
 
     /*
      * Bing 国内版直连。必须写在 Copilot / Microsoft 之前，

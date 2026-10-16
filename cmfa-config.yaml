@@ -225,6 +225,13 @@ rule-providers:
     url: "https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft.yaml"
     path: ./rules/blackmatrix7_microsoft.yaml
     interval: 86400
+  BM7-SteamCN:
+    type: http
+    behavior: classical
+    format: yaml
+    url: "https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.yaml"
+    path: ./rules/blackmatrix7_steam_cn.yaml
+    interval: 86400
 
 rules:
   # 测速 URL：不能 DIRECT，也不能被广告规则拦截。
@@ -276,6 +283,9 @@ rules:
   - DOMAIN,appldnld.g.aaplimg.com,REJECT
   - DOMAIN,updates.cdn-apple.com,REJECT
   - DOMAIN,updates-http.cdn-apple.com,REJECT
+
+  # SteamCN 下载/CDN 直连，优先于后续通用代理规则。
+  - RULE-SET,BM7-SteamCN,DIRECT,no-resolve
 
   # Bing 国内版直连，必须在 Copilot / Microsoft 之前。
   - DOMAIN,cn.bing.com,DIRECT

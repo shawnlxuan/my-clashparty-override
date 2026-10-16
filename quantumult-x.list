@@ -12,6 +12,7 @@
 #
 # 本文件只写必须压过 blackmatrix7 远程列表的例外，以及上游遗漏的 AI 域名。
 # OpenAI / Claude / Gemini / Microsoft / 国内 / 广告仍用 conf 里的 filter_remote。
+# SteamCN 下载直连也由 conf 的 filter_remote 引用；只刷新本列表不会新增远程规则。
 
 # 测速地址：不走 direct / 广告拦截
 HOST,www.gstatic.com,🤖 AI代理
